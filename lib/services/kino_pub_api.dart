@@ -3,9 +3,14 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class VideoMetaData {
+  final int id;
   final String title;
+  final String poster;
 
-  VideoMetaData.fromJson(Map<String, dynamic> json) : title = json["title"];
+  VideoMetaData.fromJson(Map<String, dynamic> json)
+      : id = json["id"],
+        title = json["title"],
+        poster = json["posters"]["medium"];
 }
 
 class KinoPubApi {
@@ -18,7 +23,7 @@ class KinoPubApi {
     const params = {
       "type": "movie",
       "page": "0",
-      "perpage": "50",
+      "perpage": "100",
     };
     final uri = Uri.https(host, "/v1/items/fresh", params);
     final response = await http.get(uri, headers: {
@@ -27,7 +32,7 @@ class KinoPubApi {
     });
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to load fresh data');
+      throw Exception("Failed to load fresh films ");
     }
     final jsonData = jsonDecode(response.body);
     final jsonItems = jsonData["items"] as List;
