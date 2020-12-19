@@ -4,8 +4,8 @@ import 'package:kino_player/services/kino_pub_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class Poster extends StatelessWidget {
-  final VideoMetaData _metaData;
   final bool _isSelected;
+  final VideoMetaData _metaData;
 
   Poster(this._metaData, this._isSelected);
 
