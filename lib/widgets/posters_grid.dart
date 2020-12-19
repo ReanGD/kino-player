@@ -21,15 +21,16 @@ class _PostersGridState extends State<PostersGrid> {
     super.initState();
   }
 
-  List<Container> _buildPostersList(List<VideoMetaData> videosMetaData) {
-    return videosMetaData
-        .map((item) => Container(child: Poster(item, item.id % 2 != 0)))
-        .toList();
+  List<Container> _buildPostersList(List<VideoMetaData> items) {
+    return List<Container>.generate(
+      items.length,
+      (int index) => Container(
+        child: Poster(index == 0, items[index]),
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final items = _buildPostersList(_videosMetaData);
+  GridView _buildPostersGrid(List<Container> items) {
     return GridView.extent(
       maxCrossAxisExtent: 300,
       padding: const EdgeInsets.all(4),
@@ -37,5 +38,11 @@ class _PostersGridState extends State<PostersGrid> {
       crossAxisSpacing: 0,
       children: items,
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = _buildPostersList(_videosMetaData);
+    return _buildPostersGrid(items);
   }
 }
