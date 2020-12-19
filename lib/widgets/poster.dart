@@ -1,15 +1,32 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kino_player/services/kino_pub_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class Poster extends StatelessWidget {
-  final bool _isSelected;
+  final bool _isAutofocus;
   final VideoMetaData _metaData;
 
-  Poster(this._metaData, this._isSelected);
+  Poster(this._isAutofocus, this._metaData);
 
-  Widget _getView(BuildContext context) {
+  bool _isKeySelectPressed(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.select) {
+        return true;
+      }
+    } else if (event is RawKeyUpEvent) {
+      // xiaomi + samsung remote
+      if ((event.logicalKey == LogicalKeyboardKey.select) &&
+          (event.physicalKey.usbHidUsage == 0x000700e4)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  Widget _getView(bool focused) {
     return Column(
       children: <Widget>[
         Expanded(
@@ -23,15 +40,36 @@ class Poster extends StatelessWidget {
           child: Text(
             _metaData.title,
             style: TextStyle(
-                fontWeight: _isSelected ? FontWeight.bold : FontWeight.normal),
+                fontWeight: focused ? FontWeight.bold : FontWeight.normal),
           ),
         )
       ],
     );
   }
 
+  bool _keyHandler(FocusNode node, RawKeyEvent event) {
+    if (_isKeySelectPressed(event)) {
+      print("Key select");
+      return true;
+    }
+
+    return false;
+  }
+
+  Widget _getFocusedView() {
+    return Focus(
+      autofocus: _isAutofocus,
+      onKey: _keyHandler,
+      child: Builder(
+        builder: (BuildContext context) {
+          return _getView(Focus.of(context).hasPrimaryFocus);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _getView(context);
+    return _getFocusedView();
   }
 }
