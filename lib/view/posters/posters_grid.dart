@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:kino_player/widgets/poster.dart';
 import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/services/fresh_loader.dart';
+import 'package:kino_player/view/posters/poster_view.dart';
 
 class PostersGrid extends StatefulWidget {
   @override
@@ -43,7 +43,7 @@ class _PostersGridState extends State<PostersGrid> {
   @override
   Widget build(BuildContext context) {
     if (_posters.length == 0) {
-      return CircularProgressIndicator();
+      return Center(child: CircularProgressIndicator());
     }
 
     return GridView.builder(
@@ -61,7 +61,7 @@ class _PostersGridState extends State<PostersGrid> {
           return _posterLoadInProgress();
         }
 
-        return Poster(index == 0, _posters[index]);
+        return PosterView(index == 0, _posters[index]);
       },
     );
   }

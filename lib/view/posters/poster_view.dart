@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:kino_player/services/poster_data.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class Poster extends StatelessWidget {
+class PosterView extends StatelessWidget {
   final bool _isAutofocus;
   final PosterData _metaData;
 
-  Poster(this._isAutofocus, this._metaData);
+  PosterView(this._isAutofocus, this._metaData);
 
   bool _isKeySelectPressed(RawKeyEvent event) {
     if (event is RawKeyDownEvent) {
