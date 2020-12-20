@@ -1,41 +1,40 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-class VideoMetaData {
-  final int id;
-  final String title;
-  final String poster;
-
-  VideoMetaData.fromJson(Map<String, dynamic> json)
-      : id = json["id"],
-        title = json["title"],
-        poster = json["posters"]["medium"];
-}
+import 'package:kino_player/services/token.dart';
+import 'package:kino_player/services/poster_data.dart';
 
 class KinoPubApi {
-  final String host = "api.service-kp.com";
+  final String _host = "api.service-kp.com";
   final String _token;
 
-  KinoPubApi(this._token);
+  KinoPubApi._() : _token = token;
 
-  Future<List<VideoMetaData>> getFresh() async {
-    const params = {
-      "type": "movie",
-      "page": "0",
-      "perpage": "100",
-    };
-    final uri = Uri.https(host, "/v1/items/fresh", params);
+  static final KinoPubApi instance = KinoPubApi._();
+
+  Future<Map<String, dynamic>> _get(
+      String path, Map<String, String> params) async {
+    final uri = Uri.https(_host, path, params);
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: "Bearer $_token",
       HttpHeaders.contentTypeHeader: "application/json",
     });
 
     if (response.statusCode != 200) {
-      throw Exception("Failed to load fresh films ");
+      throw Exception("Failed to load url $path");
     }
-    final jsonData = jsonDecode(response.body);
+
+    return jsonDecode(response.body);
+  }
+
+  Future<List<PosterData>> getFresh(String type, int page, int perPage) async {
+    final params = {
+      "type": type,
+      "page": page.toString(),
+      "perpage": perPage.toString(),
+    };
+    final jsonData = await _get("/v1/items/fresh", params);
     final jsonItems = jsonData["items"] as List;
-    return jsonItems.map((item) => VideoMetaData.fromJson(item)).toList();
+    return jsonItems.map((item) => PosterData.fromJson(item)).toList();
   }
 }
