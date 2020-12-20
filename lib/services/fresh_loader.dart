@@ -7,13 +7,9 @@ class FreshLoader {
   static const int _perPage = 25;
   int _page = 0;
 
-  Future<List<PosterData>> getFirst() async {
-    _page = 0;
-    return _api.getFresh(_type, _page, _perPage);
-  }
-
   Future<List<PosterData>> getNext() async {
+    final result = _api.getFresh(_type, _page, _perPage);
     _page++;
-    return _api.getFresh(_type, _page, _perPage);
+    return result;
   }
 }

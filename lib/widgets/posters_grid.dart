@@ -10,47 +10,57 @@ class PostersGrid extends StatefulWidget {
 }
 
 class _PostersGridState extends State<PostersGrid> {
-  final FreshLoader _loader = FreshLoader();
+  final _loader = FreshLoader();
+  final _posters = <PosterData>[];
+  bool _fetchInProgress = false;
 
   @override
   void initState() {
     super.initState();
+    _fetch();
   }
 
-  List<Container> _buildPostersList(List<PosterData> items) {
-    return List<Container>.generate(
-      items.length,
-      (int index) => Container(
-        child: Poster(index == 0, items[index]),
+  void _fetch() {
+    _fetchInProgress = true;
+    _loader.getNext().then((List<PosterData> items) {
+      setState(() {
+        _posters.addAll(items);
+        _fetchInProgress = false;
+      });
+    });
+  }
+
+  Widget _posterLoadInProgress() {
+    return Center(
+      child: SizedBox(
+        child: CircularProgressIndicator(),
+        height: 24,
+        width: 24,
       ),
-    );
-  }
-
-  GridView _buildPostersGrid(List<Container> items) {
-    return GridView.extent(
-      maxCrossAxisExtent: 300,
-      padding: const EdgeInsets.all(4),
-      mainAxisSpacing: 0,
-      crossAxisSpacing: 0,
-      children: items,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<PosterData>>(
-      future: _loader.getFirst(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final items = _buildPostersList(snapshot.data);
-          return _buildPostersGrid(items);
+    if (_posters.length == 0) {
+      return CircularProgressIndicator();
+    }
+
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 300,
+        mainAxisSpacing: 0,
+        crossAxisSpacing: 0,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        if (index >= _posters.length) {
+          if (!_fetchInProgress) {
+            _fetch();
+          }
+          return _posterLoadInProgress();
         }
 
-        if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-
-        return CircularProgressIndicator();
+        return Poster(index == 0, _posters[index]);
       },
     );
   }
