@@ -27,14 +27,13 @@ class KinoPubApi {
     return jsonDecode(response.body);
   }
 
-  Future<List<PosterData>> getFresh(String type, int page, int perPage) async {
+  Future<PostersData> getFresh(String type, int page, int perPage) async {
     final params = {
       "type": type,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
     final jsonData = await _get("/v1/items/fresh", params);
-    final jsonItems = jsonData["items"] as List;
-    return jsonItems.map((item) => PosterData.fromJson(item)).toList();
+    return PostersData.fromJson(jsonData);
   }
 }

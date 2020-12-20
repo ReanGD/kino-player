@@ -6,10 +6,14 @@ class FreshLoader {
   static const String _type = "movie";
   static const int _perPage = 25;
   int _page = 0;
+  int _total = 0;
+
+  int get total => _total;
 
   Future<List<PosterData>> getNext() async {
-    final result = _api.getFresh(_type, _page, _perPage);
+    final result = await _api.getFresh(_type, _page, _perPage);
+    _total = result.total;
     _page++;
-    return result;
+    return result.posters;
   }
 }

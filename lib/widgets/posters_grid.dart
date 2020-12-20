@@ -47,6 +47,7 @@ class _PostersGridState extends State<PostersGrid> {
     }
 
     return GridView.builder(
+      itemCount: _loader.total,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 300,
         mainAxisSpacing: 0,

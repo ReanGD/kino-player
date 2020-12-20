@@ -21,3 +21,14 @@ class PosterData {
         title = json["title"],
         poster = json["posters"]["small"];
 }
+
+class PostersData {
+  final int total;
+  final List<PosterData> posters;
+
+  PostersData.fromJson(Map<String, dynamic> json)
+      : total = json["pagination"]["total_items"],
+        posters = (json["items"] as List)
+            .map((item) => PosterData.fromJson(item))
+            .toList();
+}
