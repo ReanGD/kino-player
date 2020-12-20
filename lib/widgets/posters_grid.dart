@@ -1,27 +1,23 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:kino_player/widgets/poster.dart';
-import 'package:kino_player/services/kino_pub_api.dart';
+import 'package:kino_player/services/poster_data.dart';
+import 'package:kino_player/services/fresh_loader.dart';
 
 class PostersGrid extends StatefulWidget {
-  final List<VideoMetaData> _videosMetaData;
-
-  PostersGrid(this._videosMetaData);
-
   @override
-  createState() => _PostersGridState(_videosMetaData);
+  createState() => _PostersGridState();
 }
 
 class _PostersGridState extends State<PostersGrid> {
-  final List<VideoMetaData> _videosMetaData;
-
-  _PostersGridState(this._videosMetaData);
+  final FreshLoader _loader = FreshLoader();
 
   @override
   void initState() {
     super.initState();
   }
 
-  List<Container> _buildPostersList(List<VideoMetaData> items) {
+  List<Container> _buildPostersList(List<PosterData> items) {
     return List<Container>.generate(
       items.length,
       (int index) => Container(
@@ -42,7 +38,20 @@ class _PostersGridState extends State<PostersGrid> {
 
   @override
   Widget build(BuildContext context) {
-    final items = _buildPostersList(_videosMetaData);
-    return _buildPostersGrid(items);
+    return FutureBuilder<List<PosterData>>(
+      future: _loader.getFirst(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final items = _buildPostersList(snapshot.data);
+          return _buildPostersGrid(items);
+        }
+
+        if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        return CircularProgressIndicator();
+      },
+    );
   }
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kino_player/services/kino_pub_api.dart';
+import 'package:kino_player/services/poster_data.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class Poster extends StatelessWidget {
   final bool _isAutofocus;
-  final VideoMetaData _metaData;
+  final PosterData _metaData;
 
   Poster(this._isAutofocus, this._metaData);
 
