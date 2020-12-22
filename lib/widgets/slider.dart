@@ -54,23 +54,20 @@ class _SeekBarState extends State<SeekBar> {
             : value;
   }
 
-  @override
-  void initState() {
-    _value = _clamp(widget.value, 0, widget.max);
-    _markerValue = _clamp(widget.markerValue, 0, widget.max);
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(SeekBar oldWidget) {
-    _value = _clamp(widget.value, 0, widget.max);
-    _markerValue = _clamp(widget.markerValue, 0, widget.max);
-    super.didUpdateWidget(oldWidget);
-  }
-
   double _getTouchValue(Offset touchPoint) {
-    final dx = _clamp(touchPoint.dx, 0, context.size.width);
-    return dx * widget.max / context.size.width;
+    final value = touchPoint.dx * widget.max / context.size.width;
+    return _clamp(value, 0, widget.max);
+  }
+
+  double _getKeyValue(bool isInc) {
+    double value = _value;
+    if (isInc) {
+      value += widget.step;
+    } else {
+      value -= widget.step;
+    }
+
+    return _clamp(value, 0, widget.max);
   }
 
   void _onChangeStart(double value) {
@@ -108,16 +105,30 @@ class _SeekBarState extends State<SeekBar> {
   }
 
   @override
+  void initState() {
+    _value = _clamp(widget.value, 0, widget.max);
+    _markerValue = _clamp(widget.markerValue, 0, widget.max);
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(SeekBar oldWidget) {
+    _value = _clamp(widget.value, 0, widget.max);
+    _markerValue = _clamp(widget.markerValue, 0, widget.max);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Focus(
       autofocus: widget.autofocus,
       onKey: (FocusNode node, RawKeyEvent event) {
         if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-          _onChanged(_value - widget.step);
+          _onChanged(_getKeyValue(false));
           return true;
         }
         if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-          _onChanged(_value + widget.step);
+          _onChanged(_getKeyValue(true));
           return true;
         }
         return false;
