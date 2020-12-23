@@ -7,19 +7,21 @@ class SeekBar extends StatefulWidget {
   final double step;
   final double value;
   final double markerValue;
-  final double thumbRadius;
-  final double activeThumbRadius;
+
   final double trackHeight;
   final double activeTrackHeight;
-  final double _height;
+  final Color trackColor;
+  final Color markeredTrackColor;
+
+  final double thumbRadius;
+  final double activeThumbRadius;
+  final Color thumbColor;
+  final Color activeThumbColor;
+
   final ValueChanged<double> onChanged;
   final ValueChanged<double> onChangeStart;
   final ValueChanged<double> onChangeEnd;
-  // old
-  final Color barColor;
-  final Color progressColor;
-  final Color secondProgressColor;
-  final Color thumbColor;
+  final double _height;
 
   SeekBar({
     Key key,
@@ -28,18 +30,17 @@ class SeekBar extends StatefulWidget {
     this.step = 1.0,
     this.value = 0.0,
     this.markerValue = 0.0,
-    this.thumbRadius = 0.0,
-    this.activeThumbRadius = 7.0,
     this.trackHeight = 2.0,
     this.activeTrackHeight = 2.0,
+    this.trackColor = Colors.white,
+    this.markeredTrackColor = Colors.blue,
+    this.thumbRadius = 4.0,
+    this.activeThumbRadius = 6.0,
+    this.thumbColor = const Color(0xBB2196F3),
+    this.activeThumbColor = Colors.blue,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
-    // old
-    this.barColor = const Color(0x73FFFFFF),
-    this.progressColor = Colors.white,
-    this.secondProgressColor = const Color(0xBBFFFFFF),
-    this.thumbColor = Colors.white,
   })  : _height = 7.0 +
             _max(
                 thumbRadius, activeThumbRadius, trackHeight, activeTrackHeight),
@@ -142,14 +143,13 @@ class _SeekBarState extends State<SeekBar> {
           max: widget.max,
           value: _value,
           markerValue: _markerValue,
+          trackHeight: _focused ? widget.activeTrackHeight : widget.trackHeight,
+          trackColor: widget.trackColor,
+          markeredTrackColor: widget.markeredTrackColor,
           thumbRadius: widget.thumbRadius,
           activeThumbRadius: widget.activeThumbRadius,
-          trackHeight: _focused ? widget.activeTrackHeight : widget.trackHeight,
-          // old
-          barColor: widget.barColor,
-          progressColor: widget.progressColor,
-          secondProgressColor: widget.secondProgressColor,
           thumbColor: widget.thumbColor,
+          activeThumbColor: widget.activeThumbColor,
         ),
       ),
     );
@@ -206,28 +206,26 @@ class _SeekBarPainter extends CustomPainter {
   final double max;
   final double value;
   final double markerValue;
+  final double trackHeight;
+  final Color trackColor;
+  final Color markeredTrackColor;
   final double thumbRadius;
   final double activeThumbRadius;
-  final double trackHeight;
-  // old
-  final Color barColor;
-  final Color progressColor;
-  final Color secondProgressColor;
   final Color thumbColor;
+  final Color activeThumbColor;
 
   _SeekBarPainter({
     this.focused,
     this.max,
     this.value,
     this.markerValue,
+    this.trackHeight,
+    this.trackColor,
+    this.markeredTrackColor,
     this.thumbRadius,
     this.activeThumbRadius,
-    this.trackHeight,
-    // old
-    this.barColor,
-    this.progressColor,
-    this.secondProgressColor,
     this.thumbColor,
+    this.activeThumbColor,
   });
 
   @override
@@ -254,25 +252,19 @@ class _SeekBarPainter extends CustomPainter {
     final thumbX = startX + trackWidth * (value / max);
     final markerX = startX + trackWidth * (markerMax / max);
     final centerY = size.height / 2.0;
-    final Offset startTrackPoint = Offset(startX, centerY);
-    final Offset finishTrackPoint = Offset(finishX, centerY);
-    final Offset thumbPoint = Offset(thumbX, centerY);
-    final Offset markerPoint = Offset(markerX, centerY);
 
-    paint.color = barColor;
-    canvas.drawLine(startTrackPoint, finishTrackPoint, paint);
+    paint.color = trackColor;
+    canvas.drawLine(Offset(startX, centerY), Offset(finishX, centerY), paint);
 
-    paint.color = progressColor;
-    canvas.drawLine(startTrackPoint, markerPoint, paint);
-
-    final Paint thumbPaint = Paint()..isAntiAlias = true;
+    paint.color = markeredTrackColor;
+    canvas.drawLine(Offset(startX, centerY), Offset(markerX, centerY), paint);
 
     if (focused) {
-      thumbPaint.color = thumbColor.withOpacity(0.6);
-      canvas.drawCircle(thumbPoint, activeThumbRadius, thumbPaint);
+      paint.color = activeThumbColor;
+      canvas.drawCircle(Offset(thumbX, centerY), activeThumbRadius, paint);
     } else {
-      thumbPaint.color = thumbColor;
-      canvas.drawCircle(thumbPoint, thumbRadius, thumbPaint);
+      paint.color = thumbColor;
+      canvas.drawCircle(Offset(thumbX, centerY), thumbRadius, paint);
     }
   }
 }
