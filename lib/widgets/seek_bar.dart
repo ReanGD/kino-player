@@ -133,10 +133,32 @@ class _SeekBarState extends State<SeekBar> {
     super.didUpdateWidget(oldWidget);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _getView() {
+    return Container(
+      constraints: BoxConstraints.expand(height: widget._height),
+      child: CustomPaint(
+        painter: _SeekBarPainter(
+          focused: _focused,
+          max: widget.max,
+          value: _value,
+          markerValue: _markerValue,
+          thumbRadius: widget.thumbRadius,
+          activeThumbRadius: widget.activeThumbRadius,
+          trackHeight: _focused ? widget.activeTrackHeight : widget.trackHeight,
+          // old
+          barColor: widget.barColor,
+          progressColor: widget.progressColor,
+          secondProgressColor: widget.secondProgressColor,
+          thumbColor: widget.thumbColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _getViewWithFocus() {
     return Focus(
       autofocus: widget.autofocus,
+      child: _getView(),
       onKey: (FocusNode node, RawKeyEvent event) {
         if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
           _onChanged(_getKeyValue(false));
@@ -155,41 +177,26 @@ class _SeekBarState extends State<SeekBar> {
           _onChangeEnd();
         }
       },
-      child: GestureDetector(
-        onHorizontalDragDown: (details) {
-          final RenderBox box = context.findRenderObject();
-          final touchPoint = box.globalToLocal(details.globalPosition);
-          _onChangeStart(_getTouchValue(touchPoint));
-        },
-        onHorizontalDragUpdate: (details) {
-          final RenderBox box = context.findRenderObject();
-          final touchPoint = box.globalToLocal(details.globalPosition);
-          _onChanged(_getTouchValue(touchPoint));
-        },
-        onHorizontalDragEnd: (details) {
-          _onChangeEnd();
-        },
-        child: Container(
-          constraints: BoxConstraints.expand(height: widget._height),
-          child: CustomPaint(
-            painter: _SeekBarPainter(
-              focused: _focused,
-              max: widget.max,
-              value: _value,
-              markerValue: _markerValue,
-              thumbRadius: widget.thumbRadius,
-              activeThumbRadius: widget.activeThumbRadius,
-              trackHeight:
-                  _focused ? widget.activeTrackHeight : widget.trackHeight,
-              // old
-              barColor: widget.barColor,
-              progressColor: widget.progressColor,
-              secondProgressColor: widget.secondProgressColor,
-              thumbColor: widget.thumbColor,
-            ),
-          ),
-        ),
-      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragDown: (details) {
+        final RenderBox box = context.findRenderObject();
+        final touchPoint = box.globalToLocal(details.globalPosition);
+        _onChangeStart(_getTouchValue(touchPoint));
+      },
+      onHorizontalDragUpdate: (details) {
+        final RenderBox box = context.findRenderObject();
+        final touchPoint = box.globalToLocal(details.globalPosition);
+        _onChanged(_getTouchValue(touchPoint));
+      },
+      onHorizontalDragEnd: (details) {
+        _onChangeEnd();
+      },
+      child: _getViewWithFocus(),
     );
   }
 }
