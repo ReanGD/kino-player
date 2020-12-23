@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SeekBar extends StatefulWidget {
+  final bool autofocus;
   final double max;
   final double step;
   final double value;
   final double markerValue;
-  final bool autofocus;
+  final double thumbRadius;
+  final double activeThumbRadius;
+  final double trackHeight;
+  final double activeTrackHeight;
+  final double _height;
   final ValueChanged<double> onChanged;
   final ValueChanged<double> onChangeStart;
   final ValueChanged<double> onChangeEnd;
   // old
-  final double progressWidth;
-  final double thumbRadius;
   final Color barColor;
   final Color progressColor;
   final Color secondProgressColor;
@@ -20,22 +23,34 @@ class SeekBar extends StatefulWidget {
 
   SeekBar({
     Key key,
+    this.autofocus = false,
     this.max = 100.0,
     this.step = 1.0,
     this.value = 0.0,
     this.markerValue = 0.0,
-    this.autofocus = false,
+    this.thumbRadius = 0.0,
+    this.activeThumbRadius = 7.0,
+    this.trackHeight = 2.0,
+    this.activeTrackHeight = 2.0,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
     // old
-    this.progressWidth = 2.0,
-    this.thumbRadius = 7.0,
     this.barColor = const Color(0x73FFFFFF),
     this.progressColor = Colors.white,
     this.secondProgressColor = const Color(0xBBFFFFFF),
     this.thumbColor = Colors.white,
-  }) : super(key: key);
+  })  : _height = 7.0 +
+            _max(
+                thumbRadius, activeThumbRadius, trackHeight, activeTrackHeight),
+        super(key: key);
+
+  static double _max(double v0, double v1, double v2, double v3) {
+    double v01 = v0 > v1 ? v0 : v1;
+    double v23 = v2 > v3 ? v2 : v3;
+
+    return v01 > v23 ? v01 : v23;
+  }
 
   @override
   State<StatefulWidget> createState() => _SeekBarState();
@@ -155,20 +170,22 @@ class _SeekBarState extends State<SeekBar> {
           _onChangeEnd();
         },
         child: Container(
-          constraints: BoxConstraints.expand(height: widget.thumbRadius * 2),
+          constraints: BoxConstraints.expand(height: widget._height),
           child: CustomPaint(
             painter: _SeekBarPainter(
+              focused: _focused,
               max: widget.max,
               value: _value,
               markerValue: _markerValue,
-              // old
-              progressWidth: widget.progressWidth,
               thumbRadius: widget.thumbRadius,
+              activeThumbRadius: widget.activeThumbRadius,
+              trackHeight:
+                  _focused ? widget.activeTrackHeight : widget.trackHeight,
+              // old
               barColor: widget.barColor,
               progressColor: widget.progressColor,
               secondProgressColor: widget.secondProgressColor,
               thumbColor: widget.thumbColor,
-              focused: _focused,
             ),
           ),
         ),
@@ -178,30 +195,32 @@ class _SeekBarState extends State<SeekBar> {
 }
 
 class _SeekBarPainter extends CustomPainter {
+  final bool focused;
   final double max;
   final double value;
   final double markerValue;
-  // old
-  final double progressWidth;
   final double thumbRadius;
+  final double activeThumbRadius;
+  final double trackHeight;
+  // old
   final Color barColor;
   final Color progressColor;
   final Color secondProgressColor;
   final Color thumbColor;
-  final bool focused;
 
   _SeekBarPainter({
+    this.focused,
     this.max,
     this.value,
     this.markerValue,
-    // old
-    this.progressWidth,
     this.thumbRadius,
+    this.activeThumbRadius,
+    this.trackHeight,
+    // old
     this.barColor,
     this.progressColor,
     this.secondProgressColor,
     this.thumbColor,
-    this.focused,
   });
 
   @override
@@ -217,38 +236,36 @@ class _SeekBarPainter extends CustomPainter {
     final Paint paint = Paint()
       ..isAntiAlias = true
       ..strokeCap = StrokeCap.square
-      ..strokeWidth = progressWidth;
+      ..strokeWidth = trackHeight;
 
+    final markerMax = value > markerValue ? value : markerValue;
+    final maxThumbRadius =
+        thumbRadius > activeThumbRadius ? thumbRadius : activeThumbRadius;
+    final startX = maxThumbRadius;
+    final finishX = size.width - maxThumbRadius;
+    final trackWidth = finishX - startX;
+    final thumbX = startX + trackWidth * (value / max);
+    final markerX = startX + trackWidth * (markerMax / max);
     final centerY = size.height / 2.0;
-    final barLength = size.width - thumbRadius * 2.0;
-
-    final Offset startPoint = Offset(thumbRadius, centerY);
-    final Offset endPoint = Offset(size.width - thumbRadius, centerY);
-    final Offset progressPoint =
-        Offset(barLength * (value / max) + thumbRadius, centerY);
-    final Offset secondProgressPoint =
-        Offset(barLength * (markerValue / max) + thumbRadius, centerY);
+    final Offset startTrackPoint = Offset(startX, centerY);
+    final Offset finishTrackPoint = Offset(finishX, centerY);
+    final Offset thumbPoint = Offset(thumbX, centerY);
+    final Offset markerPoint = Offset(markerX, centerY);
 
     paint.color = barColor;
-    canvas.drawLine(startPoint, endPoint, paint);
-
-    paint.color = secondProgressColor;
-    canvas.drawLine(startPoint, secondProgressPoint, paint);
+    canvas.drawLine(startTrackPoint, finishTrackPoint, paint);
 
     paint.color = progressColor;
-    canvas.drawLine(startPoint, progressPoint, paint);
+    canvas.drawLine(startTrackPoint, markerPoint, paint);
 
     final Paint thumbPaint = Paint()..isAntiAlias = true;
 
-    thumbPaint.color = Colors.transparent;
-    canvas.drawCircle(progressPoint, centerY, thumbPaint);
-
     if (focused) {
       thumbPaint.color = thumbColor.withOpacity(0.6);
-      canvas.drawCircle(progressPoint, thumbRadius, thumbPaint);
+      canvas.drawCircle(thumbPoint, activeThumbRadius, thumbPaint);
+    } else {
+      thumbPaint.color = thumbColor;
+      canvas.drawCircle(thumbPoint, thumbRadius, thumbPaint);
     }
-
-    thumbPaint.color = thumbColor;
-    canvas.drawCircle(progressPoint, thumbRadius * 0.75, thumbPaint);
   }
 }
