@@ -1,3 +1,4 @@
+import 'package:better_player/better_player.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:kino_player/widgets/seek_bar.dart';
@@ -31,12 +32,21 @@ class ControlButton extends StatelessWidget {
 }
 
 class ControlPanel extends StatefulWidget {
+  final BetterPlayerController _controller;
+
+  ControlPanel(this._controller);
+
   @override
-  _ControlPanelState createState() => _ControlPanelState();
+  _ControlPanelState createState() => _ControlPanelState(_controller);
 }
 
 class _ControlPanelState extends State<ControlPanel> {
   double _position = 0.0;
+  bool _actionInProgress = false;
+  final BetterPlayerController _controller;
+
+  _ControlPanelState(this._controller);
+
   Widget _getSeekBar() {
     return SeekBar(
       value: _position,
@@ -56,8 +66,22 @@ class _ControlPanelState extends State<ControlPanel> {
           autofocus: true,
         ),
         ControlButton(
-          Icons.play_arrow,
-          () {},
+          _controller.isPlaying() ? Icons.pause : Icons.play_arrow,
+          () {
+            if (_actionInProgress) {
+              return;
+            }
+            _actionInProgress = true;
+            Future<void> action = _controller.isPlaying()
+                ? _controller.pause()
+                : _controller.play();
+
+            action.then((value) {
+              setState(() {
+                _actionInProgress = false;
+              });
+            });
+          },
         ),
         ControlButton(
           Icons.stop,
@@ -69,6 +93,11 @@ class _ControlPanelState extends State<ControlPanel> {
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
