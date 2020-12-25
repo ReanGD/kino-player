@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 class SeekBar extends StatefulWidget {
   final bool autofocus;
-  final double max;
+  final double _max;
   final double step;
   final double value;
   final double markerValue;
@@ -26,7 +26,7 @@ class SeekBar extends StatefulWidget {
   SeekBar({
     Key key,
     this.autofocus = false,
-    this.max = 100.0,
+    double max = 100.0,
     this.step = 1.0,
     this.value = 0.0,
     this.markerValue = 0.0,
@@ -41,12 +41,13 @@ class SeekBar extends StatefulWidget {
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
-  })  : _height = 7.0 +
-            _max(
+  })  : _max = max <= 0 ? 1.0 : max,
+        _height = 7.0 +
+            _max4(
                 thumbRadius, activeThumbRadius, trackHeight, activeTrackHeight),
         super(key: key);
 
-  static double _max(double v0, double v1, double v2, double v3) {
+  static double _max4(double v0, double v1, double v2, double v3) {
     double v01 = v0 > v1 ? v0 : v1;
     double v23 = v2 > v3 ? v2 : v3;
 
@@ -62,17 +63,17 @@ class _SeekBarState extends State<SeekBar> {
   double _value = 0.0;
   double _markerValue = 0.0;
 
-  double _clamp(double value, double min, double max) {
-    return value > max
-        ? max
-        : value < min
-            ? min
+  double _clamp(double value) {
+    return value > widget._max
+        ? widget._max
+        : value < 0.0
+            ? 0.0
             : value;
   }
 
   double _getTouchValue(Offset touchPoint) {
-    final value = touchPoint.dx * widget.max / context.size.width;
-    return _clamp(value, 0, widget.max);
+    final value = touchPoint.dx * widget._max / context.size.width;
+    return _clamp(value);
   }
 
   double _getKeyValue(bool isInc) {
@@ -83,7 +84,7 @@ class _SeekBarState extends State<SeekBar> {
       value -= widget.step;
     }
 
-    return _clamp(value, 0, widget.max);
+    return _clamp(value);
   }
 
   void _onChangeStart(double value) {
@@ -93,9 +94,7 @@ class _SeekBarState extends State<SeekBar> {
         _focused = true;
       });
     }
-    if (widget.onChangeStart != null) {
-      widget.onChangeStart(value);
-    }
+    widget.onChangeStart?.call(value);
   }
 
   void _onChanged(double value) {
@@ -104,9 +103,7 @@ class _SeekBarState extends State<SeekBar> {
         _value = value;
       });
     }
-    if (widget.onChanged != null) {
-      widget.onChanged(value);
-    }
+    widget.onChanged?.call(value);
   }
 
   void _onChangeEnd() {
@@ -115,22 +112,20 @@ class _SeekBarState extends State<SeekBar> {
         _focused = false;
       });
     }
-    if (widget.onChangeEnd != null) {
-      widget.onChangeEnd(_value);
-    }
+    widget.onChangeEnd?.call(_value);
   }
 
   @override
   void initState() {
-    _value = _clamp(widget.value, 0, widget.max);
-    _markerValue = _clamp(widget.markerValue, 0, widget.max);
+    _value = _clamp(widget.value);
+    _markerValue = _clamp(widget.markerValue);
     super.initState();
   }
 
   @override
   void didUpdateWidget(SeekBar oldWidget) {
-    _value = _clamp(widget.value, 0, widget.max);
-    _markerValue = _clamp(widget.markerValue, 0, widget.max);
+    _value = _clamp(widget.value);
+    _markerValue = _clamp(widget.markerValue);
     super.didUpdateWidget(oldWidget);
   }
 
@@ -140,7 +135,7 @@ class _SeekBarState extends State<SeekBar> {
       child: CustomPaint(
         painter: _SeekBarPainter(
           focused: _focused,
-          max: widget.max,
+          max: widget._max,
           value: _value,
           markerValue: _markerValue,
           trackHeight: _focused ? widget.activeTrackHeight : widget.trackHeight,
