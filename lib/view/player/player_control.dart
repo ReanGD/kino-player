@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:kino_player/widgets/seek_bar.dart';
 
 class ControlButton extends StatelessWidget {
   const ControlButton(this._icon, this._onPressed, {this.autofocus = false});
@@ -29,9 +30,23 @@ class ControlButton extends StatelessWidget {
   }
 }
 
-class ControlPanel extends StatelessWidget {
+class ControlPanel extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
+  _ControlPanelState createState() => _ControlPanelState();
+}
+
+class _ControlPanelState extends State<ControlPanel> {
+  double _position = 0.0;
+  Widget _getSeekBar() {
+    return SeekBar(
+      value: _position,
+      onChanged: (value) {
+        _position = value;
+      },
+    );
+  }
+
+  Widget _getControlButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -54,5 +69,16 @@ class ControlPanel extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _getSeekBar(),
+          _getControlButtons(),
+        ]);
   }
 }
