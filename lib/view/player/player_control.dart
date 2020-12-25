@@ -28,3 +28,31 @@ class ControlButton extends StatelessWidget {
     );
   }
 }
+
+class ControlPanel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ControlButton(
+          Icons.replay_30,
+          () {},
+          autofocus: true,
+        ),
+        ControlButton(
+          Icons.play_arrow,
+          () {},
+        ),
+        ControlButton(
+          Icons.stop,
+          () {},
+        ),
+        ControlButton(
+          Icons.forward_30,
+          () {},
+        ),
+      ],
+    );
+  }
+}
