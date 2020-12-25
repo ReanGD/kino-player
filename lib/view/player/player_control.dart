@@ -73,12 +73,18 @@ class _ControlPanelState extends State<ControlPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Container(
+      color: Colors.black.withAlpha(190),
+      padding: const EdgeInsets.all(10.0),
+      margin: const EdgeInsets.only(bottom: 10.0),
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
           _getSeekBar(),
           _getControlButtons(),
-        ]);
+        ],
+      ),
+    );
   }
 }
