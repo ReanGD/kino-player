@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kino_player/utils/keys.dart';
 import 'package:kino_player/services/poster_data.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -9,22 +10,6 @@ class PosterView extends StatelessWidget {
   final PosterData _metaData;
 
   PosterView(this._isAutofocus, this._metaData);
-
-  bool _isKeySelectPressed(RawKeyEvent event) {
-    if (event is RawKeyDownEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.select) {
-        return true;
-      }
-    } else if (event is RawKeyUpEvent) {
-      // xiaomi + samsung remote
-      if ((event.logicalKey == LogicalKeyboardKey.select) &&
-          (event.physicalKey.usbHidUsage == 0x000700e4)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
 
   Widget _getView(bool focused) {
     return Column(
@@ -48,7 +33,7 @@ class PosterView extends StatelessWidget {
   }
 
   bool _keyHandler(FocusNode node, RawKeyEvent event) {
-    if (_isKeySelectPressed(event)) {
+    if (isKeySelectPressed(event)) {
       print("Key select");
       return true;
     }
