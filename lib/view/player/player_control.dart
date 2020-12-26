@@ -32,26 +32,36 @@ class ControlButton extends StatelessWidget {
 }
 
 class ControlPanel extends StatefulWidget {
-  final BetterPlayerController _controller;
+  final BetterPlayerController _playerController;
 
-  ControlPanel(this._controller);
+  ControlPanel(this._playerController);
 
   @override
-  _ControlPanelState createState() => _ControlPanelState(_controller);
+  _ControlPanelState createState() => _ControlPanelState(_playerController);
 }
 
 class _ControlPanelState extends State<ControlPanel> {
-  double _position = 0.0;
+  final BetterPlayerController _playerController;
   bool _actionInProgress = false;
-  final BetterPlayerController _controller;
+  bool _isVisible = true;
+  var _videoController; // type = VideoPlayerController
+  VideoPlayerValue _latestValue;
 
-  _ControlPanelState(this._controller);
+  _ControlPanelState(this._playerController);
 
   Widget _getSeekBar() {
+    final position = _latestValue != null && _latestValue.position != null
+        ? _latestValue.position
+        : Duration.zero;
+    final duration = _latestValue != null && _latestValue.duration != null
+        ? _latestValue.duration
+        : Duration.zero;
+
     return SeekBar(
-      value: _position,
+      max: duration.inSeconds.toDouble(),
+      value: position.inSeconds.toDouble(),
       onChanged: (value) {
-        _position = value;
+        // TODO: seek to value
       },
     );
   }
@@ -66,15 +76,15 @@ class _ControlPanelState extends State<ControlPanel> {
           autofocus: true,
         ),
         ControlButton(
-          _controller.isPlaying() ? Icons.pause : Icons.play_arrow,
+          _playerController.isPlaying() ? Icons.pause : Icons.play_arrow,
           () {
             if (_actionInProgress) {
               return;
             }
             _actionInProgress = true;
-            Future<void> action = _controller.isPlaying()
-                ? _controller.pause()
-                : _controller.play();
+            Future<void> action = _playerController.isPlaying()
+                ? _playerController.pause()
+                : _playerController.play();
 
             action.then((value) {
               setState(() {
@@ -95,9 +105,29 @@ class _ControlPanelState extends State<ControlPanel> {
     );
   }
 
+  void _updateState() {
+    if (mounted) {
+      if (_isVisible) {
+        setState(() {
+          _latestValue = _videoController.value;
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
+    _videoController = _playerController.videoPlayerController;
+    _latestValue = _videoController.value;
+    _videoController.addListener(_updateState);
+    _updateState();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _videoController?.removeListener(_updateState);
+    super.dispose();
   }
 
   @override
