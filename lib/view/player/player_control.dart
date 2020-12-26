@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -43,67 +42,23 @@ class ControlPanel extends StatefulWidget {
   _ControlPanelState createState() => _ControlPanelState(_playerController);
 }
 
-enum _SeekState {
-  active,
-  finished,
-  playFromStartPosition,
-  playFromCurrentPosition,
-}
-
 class _ControlPanelState extends VideoController<ControlPanel> {
-  // seek
-  int _startSeekPosition = 0;
-  int _currentSeekPosition = 0;
-  _SeekState _seekState = _SeekState.finished;
-
   _ControlPanelState(playerController) : super(playerController);
 
-  void _startSeekTimer() {
-    if (_seekState == _SeekState.finished) {
-      return;
-    }
-
-    Timer(Duration(milliseconds: 300), () {
-      if (_seekState == _SeekState.active) {
-        doSeek(_currentSeekPosition, _startSeekTimer);
-      } else if (_seekState == _SeekState.playFromStartPosition) {
-        _seekState = _SeekState.finished;
-        doSeek(_startSeekPosition, doPlay);
-      } else if (_seekState == _SeekState.playFromCurrentPosition) {
-        _seekState = _SeekState.finished;
-        doSeek(_currentSeekPosition, doPlay);
-      }
-    });
-  }
-
   Widget _getSeekBar() {
-    final seekActive = (_seekState != _SeekState.finished);
-    final position = seekActive ? _currentSeekPosition : positionInSec;
-    final markerPosition = seekActive ? _startSeekPosition : positionInSec;
-
     return SeekBar(
       max: durationInSec.toDouble(),
       step: 1.0,
-      thumbPosition: position.toDouble(),
-      markerPosition: markerPosition.toDouble(),
-      onPressed: (position) {
-        if (_seekState == _SeekState.active) {
-          _seekState = _SeekState.playFromCurrentPosition;
-        }
+      thumbPosition: thumbPositionInSec.toDouble(),
+      markerPosition: markerPositionInSec.toDouble(),
+      onPressed: (_) {
+        finishSeek();
       },
       onChanged: (position) {
-        _currentSeekPosition = position.toInt();
-        if (_seekState == _SeekState.finished) {
-          _seekState = _SeekState.active;
-          _startSeekPosition = positionInSec;
-          doPause();
-          _startSeekTimer();
-        }
+        startSeek(position.toInt());
       },
       onChangeEnd: (_) {
-        if (_seekState == _SeekState.active) {
-          _seekState = _SeekState.playFromStartPosition;
-        }
+        cancelSeek();
       },
     );
   }
