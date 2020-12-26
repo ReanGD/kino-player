@@ -59,6 +59,12 @@ abstract class VideoController<T extends StatefulWidget> extends State<T> {
     }
   }
 
+  void doSeek(int deltaInSec) {
+    _playerController
+        .seekTo(Duration(seconds: positionInSec + deltaInSec))
+        .then((_) => _setStateRun());
+  }
+
   void startSeek(int position) {
     _currentSeekPosition = position;
     if (_seekState == _SeekState.finished) {

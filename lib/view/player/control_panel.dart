@@ -69,7 +69,7 @@ class _ControlPanelState extends VideoController<ControlPanel> {
       children: [
         ControlButton(
           Icons.replay_30,
-          () {},
+          () => doSeek(-30),
         ),
         ControlButton(
           isPlaying ? Icons.pause : Icons.play_arrow,
@@ -82,7 +82,7 @@ class _ControlPanelState extends VideoController<ControlPanel> {
         ),
         ControlButton(
           Icons.forward_30,
-          () {},
+          () => doSeek(30),
         ),
       ],
     );
