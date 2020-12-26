@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:better_player/better_player.dart';
 import 'package:kino_player/widgets/seek_bar.dart';
+import 'package:kino_player/view/player/video_controller.dart';
 
 class ControlButton extends StatelessWidget {
   const ControlButton(this._icon, this._onPressed, {this.autofocus = false});
@@ -49,60 +50,13 @@ enum _SeekState {
   playFromCurrentPosition,
 }
 
-class _ControlPanelState extends State<ControlPanel> {
-  final BetterPlayerController _playerController;
-  bool _isVisible = true;
-  var _videoController; // type = VideoPlayerController
-  VideoPlayerValue _latestValue;
-
+class _ControlPanelState extends VideoController<ControlPanel> {
   // seek
   int _startSeekPosition = 0;
   int _currentSeekPosition = 0;
   _SeekState _seekState = _SeekState.finished;
 
-  _ControlPanelState(this._playerController);
-
-  int _getDurationInSec() {
-    return _latestValue != null && _latestValue.duration != null
-        ? _latestValue.duration.inSeconds
-        : 0;
-  }
-
-  int _getPositionInSec() {
-    return _latestValue != null && _latestValue.position != null
-        ? _latestValue.position.inSeconds
-        : 0;
-  }
-
-  void _doPlay() {
-    if (!_playerController.isPlaying()) {
-      _playerController.play().then((_) => setState(() {}));
-    }
-  }
-
-  void _doPause() {
-    if (_playerController.isPlaying()) {
-      _playerController.pause().then((_) => setState(() {}));
-    }
-  }
-
-  void _doPlayPause() {
-    if (_playerController.isPlaying()) {
-      _playerController.pause().then((_) => setState(() {}));
-    } else {
-      _playerController.play().then((_) => setState(() {}));
-    }
-  }
-
-  void _doSeek(int positionInSec, void Function() callback) {
-    if (_getPositionInSec() != positionInSec) {
-      _playerController
-          .seekTo(Duration(seconds: positionInSec))
-          .then((_) => callback());
-    } else {
-      callback();
-    }
-  }
+  _ControlPanelState(playerController) : super(playerController);
 
   void _startSeekTimer() {
     if (_seekState == _SeekState.finished) {
@@ -111,25 +65,24 @@ class _ControlPanelState extends State<ControlPanel> {
 
     Timer(Duration(milliseconds: 300), () {
       if (_seekState == _SeekState.active) {
-        _doSeek(_currentSeekPosition, _startSeekTimer);
+        doSeek(_currentSeekPosition, _startSeekTimer);
       } else if (_seekState == _SeekState.playFromStartPosition) {
         _seekState = _SeekState.finished;
-        _doSeek(_startSeekPosition, _doPlay);
+        doSeek(_startSeekPosition, doPlay);
       } else if (_seekState == _SeekState.playFromCurrentPosition) {
         _seekState = _SeekState.finished;
-        _doSeek(_currentSeekPosition, _doPlay);
+        doSeek(_currentSeekPosition, doPlay);
       }
     });
   }
 
   Widget _getSeekBar() {
     final seekActive = (_seekState != _SeekState.finished);
-    final position = seekActive ? _currentSeekPosition : _getPositionInSec();
-    final markerPosition =
-        seekActive ? _startSeekPosition : _getPositionInSec();
+    final position = seekActive ? _currentSeekPosition : positionInSec;
+    final markerPosition = seekActive ? _startSeekPosition : positionInSec;
 
     return SeekBar(
-      max: _getDurationInSec().toDouble(),
+      max: durationInSec.toDouble(),
       step: 1.0,
       thumbPosition: position.toDouble(),
       markerPosition: markerPosition.toDouble(),
@@ -142,8 +95,8 @@ class _ControlPanelState extends State<ControlPanel> {
         _currentSeekPosition = position.toInt();
         if (_seekState == _SeekState.finished) {
           _seekState = _SeekState.active;
-          _startSeekPosition = _getPositionInSec();
-          _doPause();
+          _startSeekPosition = positionInSec;
+          doPause();
           _startSeekTimer();
         }
       },
@@ -164,10 +117,8 @@ class _ControlPanelState extends State<ControlPanel> {
           () {},
         ),
         ControlButton(
-          _playerController.isPlaying() ? Icons.pause : Icons.play_arrow,
-          () {
-            _doPlayPause();
-          },
+          isPlaying ? Icons.pause : Icons.play_arrow,
+          doPlayPause,
           autofocus: true,
         ),
         ControlButton(
@@ -180,31 +131,6 @@ class _ControlPanelState extends State<ControlPanel> {
         ),
       ],
     );
-  }
-
-  void _updateState() {
-    if (mounted) {
-      if (_isVisible) {
-        setState(() {
-          _latestValue = _videoController.value;
-        });
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    _videoController = _playerController.videoPlayerController;
-    _latestValue = _videoController.value;
-    _videoController.addListener(_updateState);
-    _updateState();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _videoController?.removeListener(_updateState);
-    super.dispose();
   }
 
   @override
