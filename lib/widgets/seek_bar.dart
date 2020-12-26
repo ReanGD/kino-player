@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kino_player/utils/keys.dart';
 
 class SeekBar extends StatefulWidget {
   final bool autofocus;
@@ -18,6 +19,7 @@ class SeekBar extends StatefulWidget {
   final Color thumbColor;
   final Color activeThumbColor;
 
+  final ValueChanged<double> onPressed;
   final ValueChanged<double> onChanged;
   final ValueChanged<double> onChangeStart;
   final ValueChanged<double> onChangeEnd;
@@ -38,6 +40,7 @@ class SeekBar extends StatefulWidget {
     this.activeThumbRadius = 6.0,
     this.thumbColor = const Color(0xBB2196F3),
     this.activeThumbColor = Colors.blue,
+    this.onPressed,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
@@ -95,6 +98,10 @@ class _SeekBarState extends State<SeekBar> {
       });
     }
     widget.onChangeStart?.call(value);
+  }
+
+  void _onPressed() {
+    widget.onPressed?.call(_value);
   }
 
   void _onChanged(double value) {
@@ -161,6 +168,10 @@ class _SeekBarState extends State<SeekBar> {
         }
         if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
           _onChanged(_getKeyValue(true));
+          return true;
+        }
+        if (isKeySelectPressed(event)) {
+          _onPressed();
           return true;
         }
         return false;
