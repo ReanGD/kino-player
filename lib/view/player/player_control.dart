@@ -1,6 +1,8 @@
-import 'package:better_player/better_player.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:better_player/better_player.dart';
 import 'package:kino_player/widgets/seek_bar.dart';
 
 class ControlButton extends StatelessWidget {
@@ -40,28 +42,115 @@ class ControlPanel extends StatefulWidget {
   _ControlPanelState createState() => _ControlPanelState(_playerController);
 }
 
+enum _SeekState {
+  active,
+  finished,
+  playFromStartPosition,
+  playFromCurrentPosition,
+}
+
 class _ControlPanelState extends State<ControlPanel> {
   final BetterPlayerController _playerController;
-  bool _actionInProgress = false;
   bool _isVisible = true;
   var _videoController; // type = VideoPlayerController
   VideoPlayerValue _latestValue;
 
+  // seek
+  int _startSeekPosition = 0;
+  int _currentSeekPosition = 0;
+  _SeekState _seekState = _SeekState.finished;
+
   _ControlPanelState(this._playerController);
 
+  int _getDurationInSec() {
+    return _latestValue != null && _latestValue.duration != null
+        ? _latestValue.duration.inSeconds
+        : 0;
+  }
+
+  int _getPositionInSec() {
+    return _latestValue != null && _latestValue.position != null
+        ? _latestValue.position.inSeconds
+        : 0;
+  }
+
+  void _doPlay() {
+    if (!_playerController.isPlaying()) {
+      _playerController.play().then((_) => setState(() {}));
+    }
+  }
+
+  void _doPause() {
+    if (_playerController.isPlaying()) {
+      _playerController.pause().then((_) => setState(() {}));
+    }
+  }
+
+  void _doPlayPause() {
+    if (_playerController.isPlaying()) {
+      _playerController.pause().then((_) => setState(() {}));
+    } else {
+      _playerController.play().then((_) => setState(() {}));
+    }
+  }
+
+  void _doSeek(int positionInSec, void Function() callback) {
+    if (_getPositionInSec() != positionInSec) {
+      _playerController
+          .seekTo(Duration(seconds: positionInSec))
+          .then((_) => callback());
+    } else {
+      callback();
+    }
+  }
+
+  void _startSeekTimer() {
+    if (_seekState == _SeekState.finished) {
+      return;
+    }
+
+    Timer(Duration(milliseconds: 300), () {
+      if (_seekState == _SeekState.active) {
+        _doSeek(_currentSeekPosition, _startSeekTimer);
+      } else if (_seekState == _SeekState.playFromStartPosition) {
+        _seekState = _SeekState.finished;
+        _doSeek(_startSeekPosition, _doPlay);
+      } else if (_seekState == _SeekState.playFromCurrentPosition) {
+        _seekState = _SeekState.finished;
+        _doSeek(_currentSeekPosition, _doPlay);
+      }
+    });
+  }
+
   Widget _getSeekBar() {
-    final position = _latestValue != null && _latestValue.position != null
-        ? _latestValue.position
-        : Duration.zero;
-    final duration = _latestValue != null && _latestValue.duration != null
-        ? _latestValue.duration
-        : Duration.zero;
+    final seekActive = (_seekState != _SeekState.finished);
+    final position = seekActive ? _currentSeekPosition : _getPositionInSec();
+    final markerPosition =
+        seekActive ? _startSeekPosition : _getPositionInSec();
 
     return SeekBar(
-      max: duration.inSeconds.toDouble(),
-      value: position.inSeconds.toDouble(),
-      onChanged: (value) {
-        // TODO: seek to value
+      max: _getDurationInSec().toDouble(),
+      step: 1.0,
+      value: position.toDouble(),
+      markerValue: markerPosition.toDouble(),
+      onPressed: (position) {
+        if (_seekState == _SeekState.active) {
+          _seekState = _SeekState.playFromCurrentPosition;
+        }
+      },
+      onChanged: (position) {
+        _currentSeekPosition = position.toInt();
+        if (_seekState == _SeekState.finished) {
+          _seekState = _SeekState.active;
+          _startSeekPosition = _getPositionInSec();
+          _doPause();
+          _startSeekTimer();
+        }
+      },
+      onChangeEnd: (_) {
+        if (_seekState == _SeekState.active) {
+          _seekState = _SeekState.playFromStartPosition;
+        }
       },
     );
   }
@@ -73,25 +162,13 @@ class _ControlPanelState extends State<ControlPanel> {
         ControlButton(
           Icons.replay_30,
           () {},
-          autofocus: true,
         ),
         ControlButton(
           _playerController.isPlaying() ? Icons.pause : Icons.play_arrow,
           () {
-            if (_actionInProgress) {
-              return;
-            }
-            _actionInProgress = true;
-            Future<void> action = _playerController.isPlaying()
-                ? _playerController.pause()
-                : _playerController.play();
-
-            action.then((value) {
-              setState(() {
-                _actionInProgress = false;
-              });
-            });
+            _doPlayPause();
           },
+          autofocus: true,
         ),
         ControlButton(
           Icons.stop,
