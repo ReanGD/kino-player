@@ -6,18 +6,18 @@ class SeekBar extends StatefulWidget {
   final bool autofocus;
   final double _max;
   final double step;
-  final double value;
-  final double markerValue;
+  final double thumbPosition;
+  final double markerPosition;
 
   final double trackHeight;
-  final double activeTrackHeight;
+  final double focusedTrackHeight;
   final Color trackColor;
   final Color markeredTrackColor;
 
   final double thumbRadius;
-  final double activeThumbRadius;
+  final double focusedThumbRadius;
   final Color thumbColor;
-  final Color activeThumbColor;
+  final Color focusedThumbColor;
 
   final ValueChanged<double> onPressed;
   final ValueChanged<double> onChanged;
@@ -30,24 +30,24 @@ class SeekBar extends StatefulWidget {
     this.autofocus = false,
     double max = 100.0,
     this.step = 1.0,
-    this.value = 0.0,
-    this.markerValue = 0.0,
+    this.thumbPosition = 0.0,
+    this.markerPosition = 0.0,
     this.trackHeight = 2.0,
-    this.activeTrackHeight = 2.0,
+    this.focusedTrackHeight = 2.0,
     this.trackColor = Colors.white,
     this.markeredTrackColor = Colors.blue,
     this.thumbRadius = 4.0,
-    this.activeThumbRadius = 6.0,
+    this.focusedThumbRadius = 6.0,
     this.thumbColor = const Color(0xBB2196F3),
-    this.activeThumbColor = Colors.blue,
+    this.focusedThumbColor = Colors.blue,
     this.onPressed,
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
   })  : _max = max <= 0 ? 1.0 : max,
         _height = 7.0 +
-            _max4(
-                thumbRadius, activeThumbRadius, trackHeight, activeTrackHeight),
+            _max4(thumbRadius, focusedThumbRadius, trackHeight,
+                focusedTrackHeight),
         super(key: key);
 
   static double _max4(double v0, double v1, double v2, double v3) {
@@ -63,8 +63,8 @@ class SeekBar extends StatefulWidget {
 
 class _SeekBarState extends State<SeekBar> {
   bool _focused = false;
-  double _value = 0.0;
-  double _markerValue = 0.0;
+  double _thumbPosition = 0.0;
+  double _markerPosition = 0.0;
 
   double _clamp(double value) {
     return value > widget._max
@@ -74,43 +74,42 @@ class _SeekBarState extends State<SeekBar> {
             : value;
   }
 
-  double _getTouchValue(Offset touchPoint) {
-    final value = touchPoint.dx * widget._max / context.size.width;
-    return _clamp(value);
+  double _touchPointToPosition(Offset touchPoint) {
+    return _clamp(touchPoint.dx * widget._max / context.size.width);
   }
 
-  double _getKeyValue(bool isInc) {
-    double value = _value;
+  double _getPositionAfterStep(bool isInc) {
+    double position = _thumbPosition;
     if (isInc) {
-      value += widget.step;
+      position += widget.step;
     } else {
-      value -= widget.step;
+      position -= widget.step;
     }
 
-    return _clamp(value);
-  }
-
-  void _onChangeStart(double value) {
-    if (_value != value || !_focused) {
-      setState(() {
-        _value = value;
-        _focused = true;
-      });
-    }
-    widget.onChangeStart?.call(value);
+    return _clamp(position);
   }
 
   void _onPressed() {
-    widget.onPressed?.call(_value);
+    widget.onPressed?.call(_thumbPosition);
   }
 
-  void _onChanged(double value) {
-    if (_value != value) {
+  void _onChangeStart(double position) {
+    if (_thumbPosition != position || !_focused) {
       setState(() {
-        _value = value;
+        _focused = true;
+        _thumbPosition = position;
       });
     }
-    widget.onChanged?.call(value);
+    widget.onChangeStart?.call(position);
+  }
+
+  void _onChanged(double position) {
+    if (_thumbPosition != position) {
+      setState(() {
+        _thumbPosition = position;
+      });
+    }
+    widget.onChanged?.call(position);
   }
 
   void _onChangeEnd() {
@@ -119,20 +118,20 @@ class _SeekBarState extends State<SeekBar> {
         _focused = false;
       });
     }
-    widget.onChangeEnd?.call(_value);
+    widget.onChangeEnd?.call(_thumbPosition);
   }
 
   @override
   void initState() {
-    _value = _clamp(widget.value);
-    _markerValue = _clamp(widget.markerValue);
+    _thumbPosition = _clamp(widget.thumbPosition);
+    _markerPosition = _clamp(widget.markerPosition);
     super.initState();
   }
 
   @override
   void didUpdateWidget(SeekBar oldWidget) {
-    _value = _clamp(widget.value);
-    _markerValue = _clamp(widget.markerValue);
+    _thumbPosition = _clamp(widget.thumbPosition);
+    _markerPosition = _clamp(widget.markerPosition);
     super.didUpdateWidget(oldWidget);
   }
 
@@ -143,15 +142,16 @@ class _SeekBarState extends State<SeekBar> {
         painter: _SeekBarPainter(
           focused: _focused,
           max: widget._max,
-          value: _value,
-          markerValue: _markerValue,
-          trackHeight: _focused ? widget.activeTrackHeight : widget.trackHeight,
+          thumbPosition: _thumbPosition,
+          markerPosition: _markerPosition,
+          trackHeight:
+              _focused ? widget.focusedTrackHeight : widget.trackHeight,
           trackColor: widget.trackColor,
           markeredTrackColor: widget.markeredTrackColor,
           thumbRadius: widget.thumbRadius,
-          activeThumbRadius: widget.activeThumbRadius,
+          focusedThumbRadius: widget.focusedThumbRadius,
           thumbColor: widget.thumbColor,
-          activeThumbColor: widget.activeThumbColor,
+          focusedThumbColor: widget.focusedThumbColor,
         ),
       ),
     );
@@ -163,11 +163,11 @@ class _SeekBarState extends State<SeekBar> {
       child: _getView(),
       onKey: (FocusNode node, RawKeyEvent event) {
         if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-          _onChanged(_getKeyValue(false));
+          _onChanged(_getPositionAfterStep(false));
           return true;
         }
         if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-          _onChanged(_getKeyValue(true));
+          _onChanged(_getPositionAfterStep(true));
           return true;
         }
         if (isKeySelectPressed(event)) {
@@ -178,7 +178,7 @@ class _SeekBarState extends State<SeekBar> {
       },
       onFocusChange: (bool focus) {
         if (focus) {
-          _onChangeStart(_value);
+          _onChangeStart(_thumbPosition);
         } else {
           _onChangeEnd();
         }
@@ -192,12 +192,12 @@ class _SeekBarState extends State<SeekBar> {
       onHorizontalDragDown: (details) {
         final RenderBox box = context.findRenderObject();
         final touchPoint = box.globalToLocal(details.globalPosition);
-        _onChangeStart(_getTouchValue(touchPoint));
+        _onChangeStart(_touchPointToPosition(touchPoint));
       },
       onHorizontalDragUpdate: (details) {
         final RenderBox box = context.findRenderObject();
         final touchPoint = box.globalToLocal(details.globalPosition);
-        _onChanged(_getTouchValue(touchPoint));
+        _onChanged(_touchPointToPosition(touchPoint));
       },
       onHorizontalDragEnd: (details) {
         _onChangeEnd();
@@ -210,35 +210,35 @@ class _SeekBarState extends State<SeekBar> {
 class _SeekBarPainter extends CustomPainter {
   final bool focused;
   final double max;
-  final double value;
-  final double markerValue;
+  final double thumbPosition;
+  final double markerPosition;
   final double trackHeight;
   final Color trackColor;
   final Color markeredTrackColor;
   final double thumbRadius;
-  final double activeThumbRadius;
+  final double focusedThumbRadius;
   final Color thumbColor;
-  final Color activeThumbColor;
+  final Color focusedThumbColor;
 
   _SeekBarPainter({
     this.focused,
     this.max,
-    this.value,
-    this.markerValue,
+    this.thumbPosition,
+    this.markerPosition,
     this.trackHeight,
     this.trackColor,
     this.markeredTrackColor,
     this.thumbRadius,
-    this.activeThumbRadius,
+    this.focusedThumbRadius,
     this.thumbColor,
-    this.activeThumbColor,
+    this.focusedThumbColor,
   });
 
   @override
   bool shouldRepaint(_SeekBarPainter old) {
     return max != old.max ||
-        value != old.value ||
-        markerValue != old.markerValue ||
+        thumbPosition != old.thumbPosition ||
+        markerPosition != old.markerPosition ||
         focused != old.focused;
   }
 
@@ -249,14 +249,14 @@ class _SeekBarPainter extends CustomPainter {
       ..strokeCap = StrokeCap.square
       ..strokeWidth = trackHeight;
 
-    final markerMax = value > markerValue ? value : markerValue;
     final maxThumbRadius =
-        thumbRadius > activeThumbRadius ? thumbRadius : activeThumbRadius;
+        thumbRadius > focusedThumbRadius ? thumbRadius : focusedThumbRadius;
+    final drawThumbRadius = focused ? focusedThumbRadius : thumbRadius;
     final startX = maxThumbRadius;
     final finishX = size.width - maxThumbRadius;
     final trackWidth = finishX - startX;
-    final thumbX = startX + trackWidth * (value / max);
-    final markerX = startX + trackWidth * (markerMax / max);
+    final thumbX = startX + trackWidth * (thumbPosition / max);
+    final markerX = startX + trackWidth * (markerPosition / max);
     final centerY = size.height / 2.0;
 
     paint.color = trackColor;
@@ -265,12 +265,7 @@ class _SeekBarPainter extends CustomPainter {
     paint.color = markeredTrackColor;
     canvas.drawLine(Offset(startX, centerY), Offset(markerX, centerY), paint);
 
-    if (focused) {
-      paint.color = activeThumbColor;
-      canvas.drawCircle(Offset(thumbX, centerY), activeThumbRadius, paint);
-    } else {
-      paint.color = thumbColor;
-      canvas.drawCircle(Offset(thumbX, centerY), thumbRadius, paint);
-    }
+    paint.color = focused ? focusedThumbColor : thumbColor;
+    canvas.drawCircle(Offset(thumbX, centerY), drawThumbRadius, paint);
   }
 }

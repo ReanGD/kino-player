@@ -131,8 +131,8 @@ class _ControlPanelState extends State<ControlPanel> {
     return SeekBar(
       max: _getDurationInSec().toDouble(),
       step: 1.0,
-      value: position.toDouble(),
-      markerValue: markerPosition.toDouble(),
+      thumbPosition: position.toDouble(),
+      markerPosition: markerPosition.toDouble(),
       onPressed: (position) {
         if (_seekState == _SeekState.active) {
           _seekState = _SeekState.playFromCurrentPosition;
