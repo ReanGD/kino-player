@@ -22,10 +22,21 @@ class KinoPubApi {
     });
 
     if (response.statusCode != 200) {
-      throw Exception("Failed to load url $path");
+      throw Exception(
+          "Failed to load url $path, status code = ${response.statusCode}");
     }
 
     return jsonDecode(response.body);
+  }
+
+  Future<PostersData> getHot(String type, int page, int perPage) async {
+    final params = {
+      "type": type,
+      "page": page.toString(),
+      "perpage": perPage.toString(),
+    };
+    final jsonData = await _get("/v1/items/hot", params);
+    return PostersData.fromJson(jsonData);
   }
 
   Future<PostersData> getFresh(String type, int page, int perPage) async {
@@ -38,8 +49,15 @@ class KinoPubApi {
     return PostersData.fromJson(jsonData);
   }
 
-  Future<MediaData> getMediaData(int id) async {
-    final Map<String, String> params = {};
+  Future<PostersData> getPopular(String type, int page, int perPage) async {
+    final params = {
+      "type": type,
+      "page": page.toString(),
+      "perpage": perPage.toString(),
+    };
+    final jsonData = await _get("/v1/items/popular", params);
+    return PostersData.fromJson(jsonData);
+  }
     final jsonData = await _get("/v1/items/$id", params);
     return MediaData.fromJson(jsonData, _token);
   }
