@@ -7,9 +7,9 @@ import 'package:kino_player/services/poster_data.dart';
 
 class KinoPubApi {
   final String _host = "api.service-kp.com";
-  final String _token;
+  final String _authHeader;
 
-  KinoPubApi._() : _token = "Bearer $token";
+  KinoPubApi._() : _authHeader = "Bearer $token";
 
   static final KinoPubApi instance = KinoPubApi._();
 
@@ -17,7 +17,7 @@ class KinoPubApi {
       String path, Map<String, String> params) async {
     final uri = Uri.https(_host, path, params);
     final response = await http.get(uri, headers: {
-      HttpHeaders.authorizationHeader: _token,
+      HttpHeaders.authorizationHeader: _authHeader,
       HttpHeaders.contentTypeHeader: "application/json",
     });
 
@@ -29,7 +29,13 @@ class KinoPubApi {
     return jsonDecode(response.body);
   }
 
-  Future<PostersData> getHot(String type, int page, int perPage) async {
+  Future<ContentTypesData> getContentTypes() async {
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/types", params);
+    log(jsonEncode(jsonData));
+    return ContentTypesData.fromJson(jsonData["items"]);
+  }
+
     final params = {
       "type": type,
       "page": page.toString(),
