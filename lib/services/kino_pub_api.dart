@@ -2,8 +2,12 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kino_player/services/token.dart';
-import 'package:kino_player/services/media_data.dart';
 import 'package:kino_player/services/poster_data.dart';
+import 'package:kino_player/services/content_type.dart';
+import 'package:kino_player/services/content_data.dart';
+import 'package:kino_player/services/video_file_data.dart';
+import 'package:kino_player/services/stream_type_data.dart';
+import 'package:kino_player/services/video_quality_data.dart';
 
 class KinoPubApi {
   final String _host = "api.service-kp.com";
@@ -41,6 +45,10 @@ class KinoPubApi {
     return StreamTypesData.fromJson(jsonData["items"]);
   }
 
+  Future<VideoQualitiesData> getVideoQualities() async {
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/references/video-quality", params);
+    return VideoQualitiesData.fromJson(jsonData["items"]);
   }
 
   }
