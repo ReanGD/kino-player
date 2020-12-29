@@ -2,7 +2,7 @@ import 'package:kino_player/services/content_data.dart';
 import 'package:kino_player/services/kino_pub_api.dart';
 
 class PosterData {
-  final int posterId;
+  final int id;
   final int year;
   final double imdbRating;
   final double kinopoiskRating;
@@ -12,7 +12,7 @@ class PosterData {
   final String poster;
 
   PosterData.fromJson(Map<String, dynamic> json)
-      : posterId = json["id"],
+      : id = json["id"],
         year = json["year"],
         imdbRating =
             json["imdb_rating"] == null ? 0 : json["imdb_rating"].toDouble(),
@@ -33,11 +33,11 @@ class PosterData {
 
 class PostersData {
   final int total;
-  final List<PosterData> posters;
+  final List<PosterData> items;
 
   PostersData.fromJson(Map<String, dynamic> json)
       : total = json["pagination"]["total_items"],
-        posters = (json["items"] as List)
+        items = (json["items"] as List)
             .map((item) => PosterData.fromJson(item))
             .toList();
 }

@@ -32,8 +32,17 @@ class KinoPubApi {
   Future<ContentTypesData> getContentTypes() async {
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/types", params);
-    log(jsonEncode(jsonData));
     return ContentTypesData.fromJson(jsonData["items"]);
+  }
+
+  Future<StreamTypesData> getStreamTypes() async {
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/references/streaming-type", params);
+    return StreamTypesData.fromJson(jsonData["items"]);
+  }
+
+  }
+
   }
 
     final params = {

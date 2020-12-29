@@ -17,6 +17,6 @@ class PosterFetcher {
     final result = await _callback(_page, _perPage);
     _total = result.total;
     _page++;
-    return result.posters;
+    return result.items;
   }
 }
