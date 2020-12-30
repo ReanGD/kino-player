@@ -8,6 +8,7 @@ import 'package:kino_player/services/content_data.dart';
 import 'package:kino_player/services/video_file_data.dart';
 import 'package:kino_player/services/stream_type_data.dart';
 import 'package:kino_player/services/video_quality_data.dart';
+import 'package:kino_player/services/video_voiceover_data.dart';
 
 class KinoPubApi {
   final String _host = "api.service-kp.com";
@@ -49,6 +50,12 @@ class KinoPubApi {
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/video-quality", params);
     return VideoQualitiesData.fromJson(jsonData["items"]);
+  }
+
+  Future<VoiceoversData> getVoiceovers() async {
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/references/voiceover-type", params);
+    return VoiceoversData.fromJson(jsonData["items"]);
   }
 
   }
