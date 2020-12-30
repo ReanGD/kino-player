@@ -9,6 +9,7 @@ import 'package:kino_player/services/video_file_data.dart';
 import 'package:kino_player/services/stream_type_data.dart';
 import 'package:kino_player/services/video_quality_data.dart';
 import 'package:kino_player/services/video_voiceover_data.dart';
+import 'package:kino_player/services/video_server_location_data.dart';
 import 'package:kino_player/services/video_voiceover_author_data.dart';
 
 class KinoPubApi {
@@ -33,6 +34,12 @@ class KinoPubApi {
     }
 
     return jsonDecode(response.body);
+  }
+
+  Future<ServerLocationsData> getServerLocations() async {
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/references/server-location", params);
+    return ServerLocationsData.fromJson(jsonData["items"]);
   }
 
   Future<ContentTypesData> getContentTypes() async {
