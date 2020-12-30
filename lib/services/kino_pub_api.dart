@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kino_player/services/token.dart';
 import 'package:kino_player/services/poster_data.dart';
+import 'package:kino_player/services/country_data.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/services/content_data.dart';
 import 'package:kino_player/services/video_file_data.dart';
 import 'package:kino_player/services/stream_type_data.dart';
 import 'package:kino_player/services/video_quality_data.dart';
-import 'package:kino_player/services/video_voiceover_data.dart';
-import 'package:kino_player/services/video_server_location_data.dart';
-import 'package:kino_player/services/video_voiceover_author_data.dart';
+import 'package:kino_player/services/voiceover_data.dart';
+import 'package:kino_player/services/server_location_data.dart';
+import 'package:kino_player/services/voiceover_author_data.dart';
 
 class KinoPubApi {
   final String _host = "api.service-kp.com";
@@ -70,6 +71,12 @@ class KinoPubApi {
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/voiceover-author", params);
     return VoiceoverAuthorsData.fromJson(jsonData["items"]);
+  }
+
+  Future<CountriesData> getCountries() async {
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/countries", params);
+    return CountriesData.fromJson(jsonData["items"]);
   }
 
   }
