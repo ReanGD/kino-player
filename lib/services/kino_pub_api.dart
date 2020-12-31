@@ -7,10 +7,10 @@ import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/services/country_data.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/services/content_data.dart';
+import 'package:kino_player/services/voiceover_data.dart';
 import 'package:kino_player/services/video_file_data.dart';
 import 'package:kino_player/services/stream_type_data.dart';
 import 'package:kino_player/services/video_quality_data.dart';
-import 'package:kino_player/services/voiceover_data.dart';
 import 'package:kino_player/services/server_location_data.dart';
 import 'package:kino_player/services/voiceover_author_data.dart';
 
@@ -86,6 +86,10 @@ class KinoPubApi {
     return CountriesData.fromJson(jsonData["items"]);
   }
 
+  Future<VideoFilesData> getVideoFiles(int mediaId) async {
+    final Map<String, String> params = {"mid": mediaId.toString()};
+    final jsonData = await _get("/v1/items/media-links", params);
+    return VideoFilesData.fromJson(jsonData, _authHeader);
   }
 
   Future<ContentData> getContent(PosterData posterData) async {
