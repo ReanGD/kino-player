@@ -81,8 +81,10 @@ class KinoPubApi {
 
   }
 
+
+  Future<PostersData> getHot(String contentType, int page, int perPage) async {
     final params = {
-      "type": type,
+      "type": contentType,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
@@ -90,9 +92,10 @@ class KinoPubApi {
     return PostersData.fromJson(jsonData);
   }
 
-  Future<PostersData> getFresh(String type, int page, int perPage) async {
+  Future<PostersData> getFresh(
+      String contentType, int page, int perPage) async {
     final params = {
-      "type": type,
+      "type": contentType,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
@@ -100,16 +103,14 @@ class KinoPubApi {
     return PostersData.fromJson(jsonData);
   }
 
-  Future<PostersData> getPopular(String type, int page, int perPage) async {
+  Future<PostersData> getPopular(
+      String contentType, int page, int perPage) async {
     final params = {
-      "type": type,
+      "type": contentType,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
     final jsonData = await _get("/v1/items/popular", params);
     return PostersData.fromJson(jsonData);
-  }
-    final jsonData = await _get("/v1/items/$id", params);
-    return MediaData.fromJson(jsonData, _token);
   }
 }
