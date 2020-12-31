@@ -81,6 +81,12 @@ class KinoPubApi {
 
   }
 
+  Future<ContentData> getContent(PosterData posterData) async {
+    final params = {"nolinks": "1"};
+    final posterId = posterData.id;
+    final jsonData = await _get("/v1/items/$posterId", params);
+    return ContentData.fromJson(posterData, jsonData["item"]);
+  }
 
   Future<PostersData> getHot(String contentType, int page, int perPage) async {
     final params = {
