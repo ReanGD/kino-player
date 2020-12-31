@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kino_player/services/token.dart';
+import 'package:kino_player/services/genre_data.dart';
 import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/services/country_data.dart';
 import 'package:kino_player/services/content_type.dart';
@@ -47,6 +48,12 @@ class KinoPubApi {
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/types", params);
     return ContentTypesData.fromJson(jsonData["items"]);
+  }
+
+  Future<GenresData> getGenres() async {
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/genres", params);
+    return GenresData.fromJson(jsonData["items"]);
   }
 
   Future<StreamTypesData> getStreamTypes() async {

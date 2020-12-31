@@ -43,7 +43,7 @@ class ContentData {
   int get year => _posterData.year;
   List<String> get actors => _posterData.actors;
   List<String> get directors => _posterData.directors;
-  GenresData get genres => _posterData.genres;
+  List<GenreData> get genres => _posterData.genres;
   CountriesData get countries => _posterData.countries;
   Duration get averageDuration => _posterData.averageDuration;
   Duration get totalDuration => _posterData.totalDuration;

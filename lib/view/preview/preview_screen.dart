@@ -82,9 +82,7 @@ class PreviewScreen extends StatelessWidget {
                   ]),
                   TableRow(children: [
                     Text("Жанр"),
-                    Text(_contentData.genres.items
-                        .map((e) => e.title)
-                        .join(",")),
+                    Text(_contentData.genres.map((e) => e.title).join(",")),
                   ]),
                   TableRow(children: [
                     Text("Оригинальное название"),

@@ -11,7 +11,7 @@ class PosterData {
   final int year;
   final List<String> actors;
   final List<String> directors;
-  final GenresData genres;
+  final List<GenreData> genres;
   final CountriesData countries;
   // for episode
   final Duration averageDuration;
@@ -71,7 +71,9 @@ class PosterData {
         year = json["year"],
         actors = _split(json["cast"]),
         directors = _split(json["director"]),
-        genres = GenresData.fromJson(json["genres"]),
+        genres = (json["genres"] as List)
+            .map((it) => GenreData.fromJson(it))
+            .toList(),
         countries = CountriesData.fromJson(json["countries"]),
         averageDuration =
             Duration(seconds: json["duration"]["average"].toInt()),
