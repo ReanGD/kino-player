@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:kino_player/services/poster_data.dart';
-import 'package:kino_player/services/fresh_loader.dart';
+import 'package:kino_player/services/poster_fetcher.dart';
 import 'package:kino_player/view/posters/poster_view.dart';
+import 'package:kino_player/services/kino_pub_service.dart';
 
 class PostersGrid extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class PostersGrid extends StatefulWidget {
 }
 
 class _PostersGridState extends State<PostersGrid> {
-  final _loader = FreshLoader();
+  final PosterFetcher _fetcher = KinoPubService.getFresh("serial");
   final _posters = <PosterData>[];
   bool _fetchInProgress = false;
 
@@ -22,7 +23,7 @@ class _PostersGridState extends State<PostersGrid> {
 
   void _fetch() {
     _fetchInProgress = true;
-    _loader.getNext().then((List<PosterData> items) {
+    _fetcher.getNext().then((List<PosterData> items) {
       setState(() {
         _posters.addAll(items);
         _fetchInProgress = false;
@@ -47,7 +48,7 @@ class _PostersGridState extends State<PostersGrid> {
     }
 
     return GridView.builder(
-      itemCount: _loader.total,
+      itemCount: _fetcher.total,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 300,
         mainAxisSpacing: 0,
