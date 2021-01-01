@@ -61,7 +61,7 @@ class ContentData {
   int get kinopubRatingAbsolute => _posterData.kinopubRatingAbsolute;
   double get kinopubRating => _posterData.kinopubRating;
   int get views => _posterData.views;
-  int get comments => _posterData.comments;
+  int get numberOfcomments => _posterData.numberOfcomments;
   String get posterSmall => _posterData.posterSmall;
   String get posterWide => _posterData.posterWide;
   bool get serialFinished => _posterData.serialFinished;

@@ -1,9 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kino_player/generated/l10n.dart';
 import 'package:kino_player/services/content_data.dart';
+import 'package:kino_player/view/player/player_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class PreviewScreen extends StatelessWidget {
@@ -60,6 +59,31 @@ class PreviewScreen extends StatelessWidget {
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               ),
+              OutlinedButton(
+                focusNode: FocusNode(),
+                onPressed: () {
+                  final season = _contentData.seasons[1];
+                  print(season);
+                  season.items[season.items.keys.first]
+                      .getFiles()
+                      .then((value) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PlayerScreen(value)),
+                    );
+                  });
+                  print("film");
+                },
+                child: Text("Смотреть фильм"),
+              ),
+              OutlinedButton(
+                focusNode: FocusNode(),
+                onPressed: () {
+                  print("trailer");
+                },
+                child: Text("Трейлер"),
+              ),
               Text(_contentData.titleLocal),
               Text(_contentData.plot),
               Table(
@@ -67,7 +91,9 @@ class PreviewScreen extends StatelessWidget {
                   // TODO: Text(S.of(context).NameOfFilm),
                   TableRow(children: [
                     Text("Год"),
-                    Text(_contentData.year.toString()),
+                    TextButton(
+                        onPressed: () => print("year"),
+                        child: Text(_contentData.year.toString())),
                   ]),
                   TableRow(children: [
                     Text("Рейтинг"),
@@ -76,13 +102,18 @@ class PreviewScreen extends StatelessWidget {
                   ]),
                   TableRow(children: [
                     Text("Страна"),
-                    Text(_contentData.countries.items
-                        .map((e) => e.title)
-                        .join(",")),
+                    TextButton(
+                        onPressed: () => print("cuntry"),
+                        child: Text(_contentData.countries.items
+                            .map((e) => e.title)
+                            .join(","))),
                   ]),
                   TableRow(children: [
                     Text("Жанр"),
-                    Text(_contentData.genres.map((e) => e.title).join(",")),
+                    TextButton(
+                        onPressed: () => print("genre"),
+                        child: Text(
+                            _contentData.genres.map((e) => e.title).join(","))),
                   ]),
                   TableRow(children: [
                     Text("Оригинальное название"),
@@ -90,15 +121,25 @@ class PreviewScreen extends StatelessWidget {
                   ]),
                   TableRow(children: [
                     Text("Режисер"),
-                    Text(_contentData.directors.join(", ")),
+                    TextButton(
+                        onPressed: () => print("director"),
+                        child: Text(_contentData.directors.join(", "))),
                   ]),
                   TableRow(children: [
                     Text("В ролях"),
-                    Text(_contentData.actors.join(", ")),
+                    TextButton(
+                        onPressed: () => print("actors"),
+                        child: Text(_contentData.actors.join(", "))),
                   ]),
                   TableRow(children: [
                     Text("Время"),
                     Text(_formatDuration(_contentData.averageDuration)),
+                  ]),
+                  TableRow(children: [
+                    Text("Коментарии"),
+                    TextButton(
+                        onPressed: () => print("comments"),
+                        child: Text(_contentData.numberOfcomments.toString())),
                   ]),
                 ],
               ),
@@ -113,25 +154,26 @@ class PreviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Focus(
-        onKey: (FocusNode node, RawKeyEvent event) {
-          double step = 100.0;
-          if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-            step = -step;
-          } else if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-            // pass
-          } else {
-            return false;
-          }
-          _scrollController.animateTo(
-            _scrollController.offset + step,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.ease,
-          );
-          return true;
-        },
-        child: _getView(context),
-      ),
+      body: _getView(context),
+      // body: Focus(
+      // onKey: (FocusNode node, RawKeyEvent event) {
+      //   double step = 100.0;
+      //   if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+      //     step = -step;
+      //   } else if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+      //     // pass
+      //   } else {
+      //     return false;
+      //   }
+      //   _scrollController.animateTo(
+      //     _scrollController.offset + step,
+      //     duration: Duration(milliseconds: 500),
+      //     curve: Curves.ease,
+      //   );
+      //   return true;
+      // },
+      // child: _getView(context),
+      // ),
     );
   }
 }

@@ -33,7 +33,7 @@ class PosterData {
   // == (positive / kinopubVotes) * 10
   final double kinopubRating;
   final int views;
-  final int comments;
+  final int numberOfcomments;
   final String posterSmall;
   final String posterWide;
   final bool serialFinished;
@@ -98,7 +98,7 @@ class PosterData {
             ? 0
             : json["rating_percentage"].toDouble() / 10.0,
         views = json["views"],
-        comments = json["comments"],
+        numberOfcomments = json["comments"] == null ? 0 : json["comments"],
         posterSmall = json["posters"]["small"],
         posterWide = _widePoster(json["posters"]),
         serialFinished = json["finished"],
