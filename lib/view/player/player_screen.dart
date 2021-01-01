@@ -1,14 +1,25 @@
+import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:better_player/better_player.dart';
+import 'package:kino_player/services/video_file_data.dart';
+import 'package:kino_player/view/player/control_panel.dart';
 
 class PlayerScreen extends StatefulWidget {
+  final VideoFilesData _videoFilesData;
+
+  PlayerScreen(this._videoFilesData);
+
   @override
-  _PlayerScreenState createState() => _PlayerScreenState();
+  _PlayerScreenState createState() => _PlayerScreenState(_videoFilesData);
 }
 
 class _PlayerScreenState extends State<PlayerScreen> {
-  BetterPlayerController _controller;
+  final VideoFilesData _videoFilesData;
+  BetterPlayerController _playerController;
+
+  _PlayerScreenState(this._videoFilesData);
 
   @override
   void initState() {
@@ -17,18 +28,30 @@ class _PlayerScreenState extends State<PlayerScreen> {
     );
 
     final playerCfg = BetterPlayerConfiguration(
-      aspectRatio: 21 / 9,
-      fit: BoxFit.fitHeight,
+      // aspectRatio: 21 / 9,
+      // fit: BoxFit.fitHeight,
       controlsConfiguration: controlsCfg,
+      handleLifecycle: true,
+      autoDispose: true,
     );
 
-    const url =
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+    final url = _videoFilesData.getWithBestQuality().getUrl("hls4");
+    // "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"; // 10 min
+    // "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"; // 15 sec
     const sourceType = BetterPlayerDataSourceType.network;
-    final source = BetterPlayerDataSource(sourceType, url);
-    _controller = BetterPlayerController(playerCfg);
-    _controller.setupDataSource(source);
+    final source = BetterPlayerDataSource(sourceType, url, headers: {
+      HttpHeaders.authorizationHeader:
+          _videoFilesData.getWithBestQuality().authHeader,
+    });
+    _playerController = BetterPlayerController(playerCfg);
+    _playerController.setupDataSource(source);
+    // _playerController.setVolume(0);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -37,31 +60,18 @@ class _PlayerScreenState extends State<PlayerScreen> {
       appBar: AppBar(
         title: Text("Player"),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Normal player with configuration managed by developer.",
-              style: TextStyle(fontSize: 16),
+          Positioned.fill(
+            child: Container(
+              color: Colors.black,
+              child: BetterPlayer(controller: _playerController),
             ),
           ),
-          Stack(
-            children: <Widget>[
-              Expanded(
-                child: BetterPlayer(controller: _controller),
-              ),
-              Container(
-                width: 90,
-                height: 90,
-                color: Colors.green,
-              ),
-            ],
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ControlPanel(_playerController),
           ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-          )
         ],
       ),
     );
