@@ -17,6 +17,14 @@ import 'package:kino_player/services/voiceover_author_data.dart';
 class KinoPubApi {
   final String _host = "api.service-kp.com";
   final String _authHeader;
+  ContentTypesData _contentTypesCache;
+  ServerLocationsData _serverLocationsCache;
+  GenresData _genresCache;
+  StreamTypesData _streamTypesCache;
+  VideoQualitiesData _videoQualitiesCache;
+  VoiceoversData _voiceoversCache;
+  VoiceoverAuthorsData _voiceoverAuthorsCache;
+  CountriesData _countriesCache;
 
   KinoPubApi._() : _authHeader = "Bearer $token";
 
@@ -39,51 +47,83 @@ class KinoPubApi {
   }
 
   Future<ServerLocationsData> getServerLocations() async {
+    if (_serverLocationsCache != null) {
+      return _serverLocationsCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/server-location", params);
-    return ServerLocationsData.fromJson(jsonData["items"]);
+    _serverLocationsCache = ServerLocationsData.fromJson(jsonData["items"]);
+    return _serverLocationsCache;
   }
 
   Future<ContentTypesData> getContentTypes() async {
+    if (_contentTypesCache != null) {
+      return _contentTypesCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/types", params);
-    return ContentTypesData.fromJson(jsonData["items"]);
+    _contentTypesCache = ContentTypesData.fromJson(jsonData["items"]);
+    return _contentTypesCache;
   }
 
   Future<GenresData> getGenres() async {
+    if (_genresCache != null) {
+      return _genresCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/genres", params);
-    return GenresData.fromJson(jsonData["items"]);
+    _genresCache = GenresData.fromJson(jsonData["items"]);
+    return _genresCache;
   }
 
   Future<StreamTypesData> getStreamTypes() async {
+    if (_streamTypesCache != null) {
+      return _streamTypesCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/streaming-type", params);
-    return StreamTypesData.fromJson(jsonData["items"]);
+    _streamTypesCache = StreamTypesData.fromJson(jsonData["items"]);
+    return _streamTypesCache;
   }
 
   Future<VideoQualitiesData> getVideoQualities() async {
+    if (_videoQualitiesCache != null) {
+      return _videoQualitiesCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/video-quality", params);
-    return VideoQualitiesData.fromJson(jsonData["items"]);
+    _videoQualitiesCache = VideoQualitiesData.fromJson(jsonData["items"]);
+    return _videoQualitiesCache;
   }
 
   Future<VoiceoversData> getVoiceovers() async {
+    if (_voiceoversCache != null) {
+      return _voiceoversCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/voiceover-type", params);
-    return VoiceoversData.fromJson(jsonData["items"]);
+    _voiceoversCache = VoiceoversData.fromJson(jsonData["items"]);
+    return _voiceoversCache;
   }
 
   Future<VoiceoverAuthorsData> getVoiceoverAuthors() async {
+    if (_voiceoverAuthorsCache != null) {
+      return _voiceoverAuthorsCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/voiceover-author", params);
-    return VoiceoverAuthorsData.fromJson(jsonData["items"]);
+    _voiceoverAuthorsCache = VoiceoverAuthorsData.fromJson(jsonData["items"]);
+    return _voiceoverAuthorsCache;
   }
 
   Future<CountriesData> getCountries() async {
+    if (_countriesCache != null) {
+      return _countriesCache;
+    }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/countries", params);
-    return CountriesData.fromJson(jsonData["items"]);
+    _countriesCache = CountriesData.fromJson(jsonData["items"]);
+    return _countriesCache;
   }
 
   Future<VideoFilesData> getVideoFiles(int mediaId) async {
