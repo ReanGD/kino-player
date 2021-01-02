@@ -1,27 +1,78 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class NavBar extends StatelessWidget {
-  Widget _getHeader() {
-    return DrawerHeader(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+  final _defaultUserAvatar = AssetImage("assets/graphics/anonymous.png");
+
+  Widget _getDefaultAvatar() {
+    return Image(
+      image: _defaultUserAvatar,
+      width: 60,
+      fit: BoxFit.contain,
+    );
+  }
+
+  Widget _getUserAvatar(AsyncSnapshot<UserData> snapshot) {
+    if ((snapshot.hasData) && (snapshot.data.avatar != null)) {
+      return CachedNetworkImage(
+        imageUrl: snapshot.data.avatar,
+        errorWidget: (context, url, error) => _getDefaultAvatar(),
+        width: 60,
+        fit: BoxFit.contain,
+      );
+    }
+
+    return _getDefaultAvatar();
+  }
+
+  Widget _getUserInfo(AsyncSnapshot<UserData> snapshot) {
+    final days =
+        snapshot.hasData ? snapshot.data.proDays.toString() : "Unknown";
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CachedNetworkImage(
-            imageUrl: "https://gravatar.com/avatar/adasd2fr3495igjfiug",
-            errorWidget: (context, url, error) => Icon(Icons.error),
+          Text(
+            snapshot.hasData ? snapshot.data.username : "Unknown",
+            style: TextStyle(color: Colors.white, fontSize: 25),
           ),
           Text(
-            'User name',
-            style: TextStyle(color: Colors.white, fontSize: 25),
+            "дней: $days",
+            style: TextStyle(color: Colors.white, fontSize: 15),
           ),
         ],
       ),
-      decoration: BoxDecoration(
-        color: Colors.green,
+    );
+  }
+
+  Widget _getHeader() {
+    return SizedBox(
+      height: 100.0,
+      child: DrawerHeader(
+        padding: const EdgeInsets.only(left: 16.0),
+        margin: EdgeInsets.zero,
+        child: FutureBuilder<UserData>(
+          future: KinoPubService.getUser(),
+          builder: (BuildContext context, AsyncSnapshot<UserData> snapshot) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _getUserAvatar(snapshot),
+                _getUserInfo(snapshot),
+              ],
+            );
+          },
+        ),
+        decoration: BoxDecoration(
+          color: Colors.green,
+        ),
       ),
     );
   }
@@ -72,24 +123,22 @@ class NavBar extends StatelessWidget {
     );
   }
 
-  Widget _builder(
-    BuildContext context,
-    AsyncSnapshot<ContentTypesData> snapshot,
-  ) {
-    if (snapshot.hasData) {
-      return _buildNavMenu(context, snapshot.data);
-    } else if (snapshot.hasError) {
-      return _buildErrorMessage(snapshot.error);
-    }
-    return _buildProgressWidget();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: FutureBuilder<ContentTypesData>(
         future: KinoPubService.getContentTypes(),
-        builder: _builder,
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<ContentTypesData> snapshot,
+        ) {
+          if (snapshot.hasData) {
+            return _buildNavMenu(context, snapshot.data);
+          } else if (snapshot.hasError) {
+            return _buildErrorMessage(snapshot.error);
+          }
+          return _buildProgressWidget();
+        },
       ),
     );
   }
