@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kino_player/services/token.dart';
+import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/genre_data.dart';
 import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/services/country_data.dart';
@@ -17,6 +18,7 @@ import 'package:kino_player/services/voiceover_author_data.dart';
 class KinoPubApi {
   final String _host = "api.service-kp.com";
   final String _authHeader;
+  UserData _userCache;
   ContentTypesData _contentTypesCache;
   ServerLocationsData _serverLocationsCache;
   GenresData _genresCache;
@@ -44,6 +46,16 @@ class KinoPubApi {
     }
 
     return jsonDecode(response.body);
+  }
+
+  Future<UserData> getUser() async {
+    if (_userCache != null) {
+      return _userCache;
+    }
+    final Map<String, String> params = {};
+    final jsonData = await _get("/v1/user", params);
+    _userCache = UserData.fromJson(jsonData["user"]);
+    return _userCache;
   }
 
   Future<ServerLocationsData> getServerLocations() async {

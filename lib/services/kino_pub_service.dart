@@ -1,3 +1,4 @@
+import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/genre_data.dart';
 import 'package:kino_player/services/kino_pub_api.dart';
 import 'package:kino_player/services/content_type.dart';
@@ -10,6 +11,10 @@ import 'package:kino_player/services/server_location_data.dart';
 import 'package:kino_player/services/voiceover_author_data.dart';
 
 class KinoPubService {
+  static Future<UserData> getUser() async {
+    return KinoPubApi.instance.getUser();
+  }
+
   static Future<ServerLocationsData> getServerLocations() async {
     return KinoPubApi.instance.getServerLocations();
   }
