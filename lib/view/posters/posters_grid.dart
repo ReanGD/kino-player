@@ -17,8 +17,8 @@ class _PostersGridState extends State<PostersGrid> {
 
   @override
   void initState() {
-    super.initState();
     _fetch();
+    super.initState();
   }
 
   void _fetch() {

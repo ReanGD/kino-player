@@ -4,7 +4,7 @@ typedef AsyncPostersCallback = Future<PostersData> Function(
     int page, int perPage);
 
 class PosterFetcher {
-  static const int _perPage = 25;
+  static const int _perPage = 8;
   final AsyncPostersCallback _callback;
   int _page = 0;
   int _total = 0;
@@ -14,9 +14,9 @@ class PosterFetcher {
   int get total => _total;
 
   Future<List<PosterData>> getNext() async {
+    _page++;
     final result = await _callback(_page, _perPage);
     _total = result.total;
-    _page++;
     return result.items;
   }
 }
