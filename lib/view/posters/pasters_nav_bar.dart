@@ -2,8 +2,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/content_type.dart';
+import 'package:kino_player/widgets/loader_indicator.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+const double _kDrawerHeaderHeight = 100.0;
 
 class NavBar extends StatelessWidget {
   final _defaultUserAvatar = AssetImage("assets/graphics/anonymous.png");
@@ -29,10 +32,11 @@ class NavBar extends StatelessWidget {
     return _getDefaultAvatar();
   }
 
-  Widget _getUserInfo(AsyncSnapshot<UserData> snapshot) {
+  Widget _getUserInfo(BuildContext context, AsyncSnapshot<UserData> snapshot) {
     final days =
         snapshot.hasData ? snapshot.data.proDays.toString() : "Unknown";
-    return Container(
+    final TextTheme theme = Theme.of(context).textTheme;
+    return Padding(
       padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -40,20 +44,19 @@ class NavBar extends StatelessWidget {
         children: [
           Text(
             snapshot.hasData ? snapshot.data.username : "Unknown",
-            style: TextStyle(color: Colors.white, fontSize: 25),
+            style: theme.headline6,
           ),
           Text(
             "дней: $days",
-            style: TextStyle(color: Colors.white, fontSize: 15),
           ),
         ],
       ),
     );
   }
 
-  Widget _getHeader() {
+  Widget _getHeader(BuildContext context) {
     return SizedBox(
-      height: 100.0,
+      height: _kDrawerHeaderHeight,
       child: DrawerHeader(
         padding: const EdgeInsets.only(left: 16.0),
         margin: EdgeInsets.zero,
@@ -65,7 +68,7 @@ class NavBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _getUserAvatar(snapshot),
-                _getUserInfo(snapshot),
+                _getUserInfo(context, snapshot),
               ],
             );
           },
@@ -78,14 +81,15 @@ class NavBar extends StatelessWidget {
   }
 
   Widget _buildNavMenu(BuildContext context, ContentTypesData data) {
-    List<Widget> children = [_getHeader()];
-    data.items.forEach((element) {
+    List<Widget> children = [_getHeader(context)];
+    for (var i = 0; i != data.items.length; ++i) {
       children.add(ListTile(
+        autofocus: i == 0,
         leading: Icon(Icons.verified_user),
-        title: Text(element.title),
+        title: Text(data.items[i].title),
         onTap: () => {Navigator.of(context).pop()},
       ));
-    });
+    }
 
     return ListView(
       padding: EdgeInsets.zero,
@@ -113,16 +117,6 @@ class NavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressWidget() {
-    return Center(
-      child: SizedBox(
-        child: CircularProgressIndicator(),
-        width: 60,
-        height: 60,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -137,7 +131,7 @@ class NavBar extends StatelessWidget {
           } else if (snapshot.hasError) {
             return _buildErrorMessage(snapshot.error);
           }
-          return _buildProgressWidget();
+          return LoaderIndicator();
         },
       ),
     );
