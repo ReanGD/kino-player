@@ -15,18 +15,32 @@ import 'package:kino_player/services/video_quality_data.dart';
 import 'package:kino_player/services/server_location_data.dart';
 import 'package:kino_player/services/voiceover_author_data.dart';
 
+class _CacheValue<T> {
+  T _value;
+  bool _isFilled = false;
+
+  bool get isFilled => _isFilled;
+  T get value => _value;
+
+  T fill(T value) {
+    _isFilled = true;
+    _value = value;
+    return _value;
+  }
+}
+
 class KinoPubApi {
   final String _host = "api.service-kp.com";
   final String _authHeader;
-  UserData _userCache;
-  ContentTypesData _contentTypesCache;
-  ServerLocationsData _serverLocationsCache;
-  GenresData _genresCache;
-  StreamTypesData _streamTypesCache;
-  VideoQualitiesData _videoQualitiesCache;
-  VoiceoversData _voiceoversCache;
-  VoiceoverAuthorsData _voiceoverAuthorsCache;
-  CountriesData _countriesCache;
+  var _userCache = _CacheValue<UserData>();
+  var _contentTypesCache = _CacheValue<ContentTypesData>();
+  var _serverLocationsCache = _CacheValue<ServerLocationsData>();
+  var _genresCache = _CacheValue<GenresData>();
+  var _streamTypesCache = _CacheValue<StreamTypesData>();
+  var _videoQualitiesCache = _CacheValue<VideoQualitiesData>();
+  var _voiceoversCache = _CacheValue<VoiceoversData>();
+  var _voiceoverAuthorsCache = _CacheValue<VoiceoverAuthorsData>();
+  var _countriesCache = _CacheValue<CountriesData>();
 
   KinoPubApi._() : _authHeader = "Bearer $token";
 
@@ -49,93 +63,88 @@ class KinoPubApi {
   }
 
   Future<UserData> getUser() async {
-    if (_userCache != null) {
-      return _userCache;
+    if (_userCache.isFilled) {
+      return _userCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/user", params);
-    _userCache = UserData.fromJson(jsonData["user"]);
-    return _userCache;
+    return _userCache.fill(UserData.fromJson(jsonData["user"]));
   }
 
   Future<ServerLocationsData> getServerLocations() async {
-    if (_serverLocationsCache != null) {
-      return _serverLocationsCache;
+    if (_serverLocationsCache.isFilled) {
+      return _serverLocationsCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/server-location", params);
-    _serverLocationsCache = ServerLocationsData.fromJson(jsonData["items"]);
-    return _serverLocationsCache;
+    return _serverLocationsCache
+        .fill(ServerLocationsData.fromJson(jsonData["items"]));
   }
 
   Future<ContentTypesData> getContentTypes() async {
-    if (_contentTypesCache != null) {
-      return _contentTypesCache;
+    if (_contentTypesCache.isFilled) {
+      return _contentTypesCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/types", params);
-    _contentTypesCache = ContentTypesData.fromJson(jsonData["items"]);
-    return _contentTypesCache;
+    return _contentTypesCache
+        .fill(ContentTypesData.fromJson(jsonData["items"]));
   }
 
   Future<GenresData> getGenres() async {
-    if (_genresCache != null) {
-      return _genresCache;
+    if (_genresCache.isFilled) {
+      return _genresCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/genres", params);
-    _genresCache = GenresData.fromJson(jsonData["items"]);
-    return _genresCache;
+    return _genresCache.fill(GenresData.fromJson(jsonData["items"]));
   }
 
   Future<StreamTypesData> getStreamTypes() async {
-    if (_streamTypesCache != null) {
-      return _streamTypesCache;
+    if (_streamTypesCache.isFilled) {
+      return _streamTypesCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/streaming-type", params);
-    _streamTypesCache = StreamTypesData.fromJson(jsonData["items"]);
-    return _streamTypesCache;
+    return _streamTypesCache.fill(StreamTypesData.fromJson(jsonData["items"]));
   }
 
   Future<VideoQualitiesData> getVideoQualities() async {
-    if (_videoQualitiesCache != null) {
-      return _videoQualitiesCache;
+    if (_videoQualitiesCache.isFilled) {
+      return _videoQualitiesCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/video-quality", params);
-    _videoQualitiesCache = VideoQualitiesData.fromJson(jsonData["items"]);
-    return _videoQualitiesCache;
+    return _videoQualitiesCache
+        .fill(VideoQualitiesData.fromJson(jsonData["items"]));
   }
 
   Future<VoiceoversData> getVoiceovers() async {
-    if (_voiceoversCache != null) {
-      return _voiceoversCache;
+    if (_voiceoversCache.isFilled) {
+      return _voiceoversCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/voiceover-type", params);
-    _voiceoversCache = VoiceoversData.fromJson(jsonData["items"]);
-    return _voiceoversCache;
+    return _voiceoversCache.fill(VoiceoversData.fromJson(jsonData["items"]));
   }
 
   Future<VoiceoverAuthorsData> getVoiceoverAuthors() async {
-    if (_voiceoverAuthorsCache != null) {
-      return _voiceoverAuthorsCache;
+    if (_voiceoverAuthorsCache.isFilled) {
+      return _voiceoverAuthorsCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/references/voiceover-author", params);
-    _voiceoverAuthorsCache = VoiceoverAuthorsData.fromJson(jsonData["items"]);
-    return _voiceoverAuthorsCache;
+    return _voiceoverAuthorsCache
+        .fill(VoiceoverAuthorsData.fromJson(jsonData["items"]));
   }
 
   Future<CountriesData> getCountries() async {
-    if (_countriesCache != null) {
-      return _countriesCache;
+    if (_countriesCache.isFilled) {
+      return _countriesCache.value;
     }
     final Map<String, String> params = {};
     final jsonData = await _get("/v1/countries", params);
-    _countriesCache = CountriesData.fromJson(jsonData["items"]);
-    return _countriesCache;
+    return _countriesCache.fill(CountriesData.fromJson(jsonData["items"]));
   }
 
   Future<VideoFilesData> getVideoFiles(int mediaId) async {
