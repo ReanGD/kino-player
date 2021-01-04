@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kino_player/services/token.dart';
@@ -15,18 +16,25 @@ import 'package:kino_player/services/video_quality_data.dart';
 import 'package:kino_player/services/server_location_data.dart';
 import 'package:kino_player/services/voiceover_author_data.dart';
 
+class ApiException implements Exception {
+  final String path;
+  final String message;
+
+  const ApiException(this.path, this.message);
+
+  String toString() => "API call $path finished with error: $message";
+}
+
+class ApiAuthException implements Exception {
+  final String path;
+  const ApiAuthException(this.path);
+
+  String toString() => "API call $path finished with auth error";
+}
+
 class _CacheValue<T> {
-  T _value;
-  bool _isFilled = false;
-
-  bool get isFilled => _isFilled;
-  T get value => _value;
-
-  T fill(T value) {
-    _isFilled = true;
-    _value = value;
-    return _value;
-  }
+  T value;
+  bool isFilled = false;
 }
 
 class KinoPubApi {
@@ -46,149 +54,144 @@ class KinoPubApi {
 
   static final KinoPubApi instance = KinoPubApi._();
 
-  Future<Map<String, dynamic>> _get(
-      String path, Map<String, String> params) async {
-    final uri = Uri.https(_host, path, params);
-    final response = await http.get(uri, headers: {
-      HttpHeaders.authorizationHeader: _authHeader,
-      HttpHeaders.contentTypeHeader: "application/json",
-    });
-
-    if (response.statusCode != 200) {
-      throw Exception(
-          "Failed to load url $path, status code = ${response.statusCode}");
+  Future<T> _get<T>(
+    String path,
+    Map<String, String> params,
+    T ctor(Map<String, dynamic> _),
+  ) async {
+    http.Response response;
+    try {
+      final uri = Uri.https(_host, path, params);
+      response = await http.get(uri, headers: {
+        HttpHeaders.authorizationHeader: _authHeader,
+        HttpHeaders.contentTypeHeader: "application/json",
+      });
+    } on SocketException {
+      throw ApiException(path, "no internet connection");
+    } on TimeoutException catch (e) {
+      throw ApiException(path, "connection timeout ($e)");
+    } catch (e) {
+      throw ApiException(path, e.toString());
     }
 
-    return jsonDecode(response.body);
-  }
-
-  Future<UserData> getUser() async {
-    if (_userCache.isFilled) {
-      return _userCache.value;
+    if (response.statusCode == 401) {
+      throw ApiAuthException(path);
+    } else if (response.statusCode != 200) {
+      throw ApiException(path, "status code = ${response.statusCode}");
     }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/user", params);
-    return _userCache.fill(UserData.fromJson(jsonData["user"]));
-  }
 
-  Future<ServerLocationsData> getServerLocations() async {
-    if (_serverLocationsCache.isFilled) {
-      return _serverLocationsCache.value;
+    Map<String, dynamic> jsonData;
+    try {
+      jsonData = jsonDecode(response.body);
+    } catch (e) {
+      throw ApiException(path, "failed parse json ($e)");
     }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/references/server-location", params);
-    return _serverLocationsCache
-        .fill(ServerLocationsData.fromJson(jsonData["items"]));
-  }
 
-  Future<ContentTypesData> getContentTypes() async {
-    if (_contentTypesCache.isFilled) {
-      return _contentTypesCache.value;
+    try {
+      return ctor(jsonData);
+    } catch (e) {
+      throw ApiException(path, "failed parse answer ($e)");
     }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/types", params);
-    return _contentTypesCache
-        .fill(ContentTypesData.fromJson(jsonData["items"]));
   }
 
-  Future<GenresData> getGenres() async {
-    if (_genresCache.isFilled) {
-      return _genresCache.value;
+  Future<T> _getWithCache<T>(
+    String path,
+    _CacheValue<T> cacheValue,
+    T ctor(Map<String, dynamic> _),
+  ) async {
+    if (cacheValue.isFilled) {
+      print("from cache");
+      return cacheValue.value;
     }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/genres", params);
-    return _genresCache.fill(GenresData.fromJson(jsonData["items"]));
+    print("from http");
+    cacheValue.value = await _get(path, Map<String, String>(), ctor);
+    cacheValue.isFilled = true;
+    return cacheValue.value;
   }
 
-  Future<StreamTypesData> getStreamTypes() async {
-    if (_streamTypesCache.isFilled) {
-      return _streamTypesCache.value;
-    }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/references/streaming-type", params);
-    return _streamTypesCache.fill(StreamTypesData.fromJson(jsonData["items"]));
+  Future<UserData> getUser() {
+    return _getWithCache(
+        "/v1/user", _userCache, (j) => UserData.fromJson(j["user"]));
   }
 
-  Future<VideoQualitiesData> getVideoQualities() async {
-    if (_videoQualitiesCache.isFilled) {
-      return _videoQualitiesCache.value;
-    }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/references/video-quality", params);
-    return _videoQualitiesCache
-        .fill(VideoQualitiesData.fromJson(jsonData["items"]));
+  Future<ServerLocationsData> getServerLocations() {
+    return _getWithCache("/v1/references/server-location",
+        _serverLocationsCache, (j) => ServerLocationsData.fromJson(j["items"]));
   }
 
-  Future<VoiceoversData> getVoiceovers() async {
-    if (_voiceoversCache.isFilled) {
-      return _voiceoversCache.value;
-    }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/references/voiceover-type", params);
-    return _voiceoversCache.fill(VoiceoversData.fromJson(jsonData["items"]));
+  Future<ContentTypesData> getContentTypes() {
+    return _getWithCache("/v1/types", _contentTypesCache,
+        (j) => ContentTypesData.fromJson(j["items"]));
   }
 
-  Future<VoiceoverAuthorsData> getVoiceoverAuthors() async {
-    if (_voiceoverAuthorsCache.isFilled) {
-      return _voiceoverAuthorsCache.value;
-    }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/references/voiceover-author", params);
-    return _voiceoverAuthorsCache
-        .fill(VoiceoverAuthorsData.fromJson(jsonData["items"]));
+  Future<GenresData> getGenres() {
+    return _getWithCache(
+        "/v1/genres", _genresCache, (j) => GenresData.fromJson(j["items"]));
   }
 
-  Future<CountriesData> getCountries() async {
-    if (_countriesCache.isFilled) {
-      return _countriesCache.value;
-    }
-    final Map<String, String> params = {};
-    final jsonData = await _get("/v1/countries", params);
-    return _countriesCache.fill(CountriesData.fromJson(jsonData["items"]));
+  Future<StreamTypesData> getStreamTypes() {
+    return _getWithCache("/v1/references/streaming-type", _streamTypesCache,
+        (j) => StreamTypesData.fromJson(j["items"]));
   }
 
-  Future<VideoFilesData> getVideoFiles(int mediaId) async {
+  Future<VideoQualitiesData> getVideoQualities() {
+    return _getWithCache("/v1/references/video-quality", _videoQualitiesCache,
+        (j) => VideoQualitiesData.fromJson(j["items"]));
+  }
+
+  Future<VoiceoversData> getVoiceovers() {
+    return _getWithCache("/v1/references/voiceover-type", _voiceoversCache,
+        (j) => VoiceoversData.fromJson(j["items"]));
+  }
+
+  Future<VoiceoverAuthorsData> getVoiceoverAuthors() {
+    return _getWithCache(
+        "/v1/references/voiceover-author",
+        _voiceoverAuthorsCache,
+        (j) => VoiceoverAuthorsData.fromJson(j["items"]));
+  }
+
+  Future<CountriesData> getCountries() {
+    return _getWithCache("/v1/countries", _countriesCache,
+        (j) => CountriesData.fromJson(j["items"]));
+  }
+
+  Future<VideoFilesData> getVideoFiles(int mediaId) {
     final Map<String, String> params = {"mid": mediaId.toString()};
-    final jsonData = await _get("/v1/items/media-links", params);
-    return VideoFilesData.fromJson(jsonData, _authHeader);
+    return _get("/v1/items/media-links", params,
+        (j) => VideoFilesData.fromJson(j, _authHeader));
   }
 
-  Future<ContentData> getContent(PosterData posterData) async {
+  Future<ContentData> getContent(PosterData posterData) {
     final params = {"nolinks": "1"};
-    final posterId = posterData.id;
-    final jsonData = await _get("/v1/items/$posterId", params);
-    return ContentData.fromJson(posterData, jsonData["item"]);
+    return _get("/v1/items/${posterData.id}", params,
+        (j) => ContentData.fromJson(posterData, j["item"]));
   }
 
-  Future<PostersData> getHot(String contentType, int page, int perPage) async {
+  Future<PostersData> getHot(String contentType, int page, int perPage) {
     final params = {
       "type": contentType,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
-    final jsonData = await _get("/v1/items/hot", params);
-    return PostersData.fromJson(jsonData);
+    return _get("/v1/items/hot", params, (j) => PostersData.fromJson(j));
   }
 
-  Future<PostersData> getFresh(
-      String contentType, int page, int perPage) async {
+  Future<PostersData> getFresh(String contentType, int page, int perPage) {
     final params = {
       "type": contentType,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
-    final jsonData = await _get("/v1/items/fresh", params);
-    return PostersData.fromJson(jsonData);
+    return _get("/v1/items/fresh", params, (j) => PostersData.fromJson(j));
   }
 
-  Future<PostersData> getPopular(
-      String contentType, int page, int perPage) async {
+  Future<PostersData> getPopular(String contentType, int page, int perPage) {
     final params = {
       "type": contentType,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
-    final jsonData = await _get("/v1/items/popular", params);
-    return PostersData.fromJson(jsonData);
+    return _get("/v1/items/popular", params, (j) => PostersData.fromJson(j));
   }
 }
