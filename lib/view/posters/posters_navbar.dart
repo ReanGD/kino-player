@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:kino_player/services/user_data.dart';
+import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/widgets/loader_indicator.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
@@ -11,19 +12,21 @@ class _NavBarData {
   final ContentTypesData contentType;
 
   _NavBarData(this.userData, this.contentType);
-}
 
-class NavBar extends StatelessWidget {
-  final Future<_NavBarData> _data;
-  final _defaultAvatarImage = AssetImage("assets/graphics/anonymous.png");
-
-  NavBar() : _data = _loadData();
-
-  static Future<_NavBarData> _loadData() async {
+  static Future<_NavBarData> asyncLoad() async {
     final userData = KinoPubService.getUser();
     final contentType = KinoPubService.getContentTypes();
     return _NavBarData(await userData, await contentType);
   }
+}
+
+class PostersNavbar extends StatelessWidget {
+  final Future<_NavBarData> _data;
+  final ValueNotifier<PostersRequestParams> _notifier;
+  static const _defaultAvatarImage =
+      AssetImage("assets/graphics/anonymous.png");
+
+  PostersNavbar(this._notifier) : _data = _NavBarData.asyncLoad();
 
   Widget _getDefaultAvatar() {
     return Image(
@@ -83,15 +86,12 @@ class NavBar extends StatelessWidget {
         autofocus: i == 0,
         leading: Icon(Icons.verified_user),
         title: Text(items[i].title),
-        onTap: () => {Navigator.of(context).pop()},
-      ));
-    }
-    for (var i = 0; i != items.length; ++i) {
-      children.add(ListTile(
-        autofocus: i == 0,
-        leading: Icon(Icons.verified_user),
-        title: Text(items[i].title),
-        onTap: () => {Navigator.of(context).pop()},
+        onTap: () {
+          var value = _notifier.value;
+          value.contentTypeId = items[i].id;
+          _notifier.value = value;
+          Navigator.of(context).pop();
+        },
       ));
     }
 

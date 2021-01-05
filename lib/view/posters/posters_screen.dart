@@ -1,36 +1,20 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/view/posters/posters_grid.dart';
+import 'package:kino_player/view/posters/posters_navbar.dart';
+import 'package:kino_player/view/posters/posters_toolbar.dart';
 
 class PostersScreen extends StatelessWidget {
-  AppBar _getBar() {
-    return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.menu),
-        tooltip: 'Navigation menu',
-        onPressed: null,
-      ),
-      title: Text('Kino player'),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.search),
-          tooltip: 'Search',
-          onPressed: null,
-        ),
-        IconButton(
-          icon: Icon(Icons.sort),
-          tooltip: 'Sort',
-          onPressed: null,
-        ),
-      ],
-    );
-  }
+  final _postersParams =
+      ValueNotifier<PostersRequestParams>(PostersRequestParams());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _getBar(),
-      body: PostersGrid(),
+      appBar: PostersToolBar(),
+      drawer: PostersNavbar(_postersParams),
+      body: PostersGrid(_postersParams),
     );
   }
 }
