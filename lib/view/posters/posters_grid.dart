@@ -11,6 +11,22 @@ class PostersGrid extends StatefulWidget {
   createState() => _PostersGridState();
 }
 
+class _GridOrderPolicy extends OrderedTraversalPolicy {
+  final VoidCallback _driwerOpener;
+
+  _GridOrderPolicy(this._driwerOpener) : super();
+
+  @override
+  bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    bool result = super.inDirection(currentNode, direction);
+    if ((direction == TraversalDirection.left) && !result) {
+      _driwerOpener();
+    }
+
+    return result;
+  }
+}
+
 class _PostersGridState extends State<PostersGrid> {
   final PosterFetcher _fetcher = KinoPubService.getFresh("serial");
   final _posters = <PosterData>[];
@@ -38,23 +54,26 @@ class _PostersGridState extends State<PostersGrid> {
       return LoaderIndicator();
     }
 
-    return GridView.builder(
-      itemCount: _fetcher.total,
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 300,
-        mainAxisSpacing: 0,
-        crossAxisSpacing: 0,
-      ),
-      itemBuilder: (BuildContext context, int index) {
-        if (index >= _posters.length) {
-          if (!_fetchInProgress) {
-            _fetch();
+    return FocusTraversalGroup(
+      policy: _GridOrderPolicy(() => Scaffold.of(context).openDrawer()),
+      child: GridView.builder(
+        itemCount: _fetcher.total,
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 300,
+          mainAxisSpacing: 0,
+          crossAxisSpacing: 0,
+        ),
+        itemBuilder: (BuildContext context, int index) {
+          if (index >= _posters.length) {
+            if (!_fetchInProgress) {
+              _fetch();
+            }
+            return LoaderIndicator();
           }
-          return LoaderIndicator();
-        }
 
-        return PosterView(index == 0, _posters[index]);
-      },
+          return PosterView(index == 0, _posters[index]);
+        },
+      ),
     );
   }
 }
