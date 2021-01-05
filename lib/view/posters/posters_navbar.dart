@@ -1,11 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:kino_player/services/user_data.dart';
-import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/widgets/loader_indicator.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:kino_player/view/posters/posters_settings.dart';
 
 class _NavBarData {
   final UserData userData;
@@ -22,11 +22,11 @@ class _NavBarData {
 
 class PostersNavbar extends StatelessWidget {
   final Future<_NavBarData> _data;
-  final ValueNotifier<PostersRequestParams> _notifier;
+  final PostersSettings _settings;
   static const _defaultAvatarImage =
       AssetImage("assets/graphics/anonymous.png");
 
-  PostersNavbar(this._notifier) : _data = _NavBarData.asyncLoad();
+  PostersNavbar(this._settings) : _data = _NavBarData.asyncLoad();
 
   Widget _getDefaultAvatar() {
     return Image(
@@ -87,9 +87,8 @@ class PostersNavbar extends StatelessWidget {
         leading: Icon(Icons.verified_user),
         title: Text(items[i].title),
         onTap: () {
-          var value = _notifier.value;
-          value.contentTypeId = items[i].id;
-          _notifier.value = value;
+          _settings.contentTypeId = items[i].id;
+          _settings.apply();
           Navigator.of(context).pop();
         },
       ));

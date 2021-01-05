@@ -5,11 +5,7 @@ import 'package:kino_player/services/poster_fetcher.dart';
 import 'package:kino_player/view/posters/poster_view.dart';
 import 'package:kino_player/widgets/loader_indicator.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
-
-class PostersGrid extends StatefulWidget {
-  @override
-  createState() => _PostersGridState();
-}
+import 'package:kino_player/view/posters/posters_settings.dart';
 
 class _GridOrderPolicy extends OrderedTraversalPolicy {
   final VoidCallback _driwerOpener;
@@ -27,15 +23,40 @@ class _GridOrderPolicy extends OrderedTraversalPolicy {
   }
 }
 
+class PostersGrid extends StatefulWidget {
+  final PostersSettings _settings;
+
+  PostersGrid(this._settings);
+
+  @override
+  createState() => _PostersGridState();
+}
+
 class _PostersGridState extends State<PostersGrid> {
-  final PosterFetcher _fetcher = KinoPubService.getFresh("serial");
+  PosterFetcher _fetcher;
   final _posters = <PosterData>[];
   bool _fetchInProgress = false;
 
   @override
   void initState() {
-    _fetch();
     super.initState();
+    _fetcher = KinoPubService.getPosters(widget._settings.requestParams);
+    _fetch();
+    widget._settings.addListener(_postersParamsUpdated);
+  }
+
+  @override
+  void dispose() {
+    widget._settings.removeListener(_postersParamsUpdated);
+    super.dispose();
+  }
+
+  void _postersParamsUpdated() {
+    setState(() {
+      _fetcher = KinoPubService.getPosters(widget._settings.requestParams);
+      _posters.clear();
+      _fetch();
+    });
   }
 
   void _fetch() {

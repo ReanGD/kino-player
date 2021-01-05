@@ -124,4 +124,9 @@ class PostersData {
 
 class PostersRequestParams {
   String contentTypeId = "";
+
+  PostersRequestParams({this.contentTypeId});
+
+  PostersRequestParams.clone(PostersRequestParams other)
+      : contentTypeId = other.contentTypeId;
 }
