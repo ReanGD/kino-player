@@ -121,3 +121,7 @@ class PostersData {
             .map((item) => PosterData.fromJson(item))
             .toList();
 }
+
+class PostersRequestParams {
+  String contentTypeId = "";
+}

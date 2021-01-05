@@ -100,10 +100,8 @@ class KinoPubApi {
     T ctor(Map<String, dynamic> _),
   ) async {
     if (cacheValue.isFilled) {
-      print("from cache");
       return cacheValue.value;
     }
-    print("from http");
     cacheValue.value = await _get(path, Map<String, String>(), ctor);
     cacheValue.isFilled = true;
     return cacheValue.value;
@@ -168,27 +166,39 @@ class KinoPubApi {
         (j) => ContentData.fromJson(posterData, j["item"]));
   }
 
-  Future<PostersData> getHot(String contentType, int page, int perPage) {
+  Future<PostersData> getPosters(
+      PostersRequestParams p, int page, int perPage) {
+    var params = {
+      "page": page.toString(),
+      "perpage": perPage.toString(),
+    };
+    if (p.contentTypeId.isNotEmpty) {
+      params["type"] = p.contentTypeId;
+    }
+    return _get("/v1/items", params, (j) => PostersData.fromJson(j));
+  }
+
+  Future<PostersData> getHot(String contentTypeId, int page, int perPage) {
     final params = {
-      "type": contentType,
+      "type": contentTypeId,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
     return _get("/v1/items/hot", params, (j) => PostersData.fromJson(j));
   }
 
-  Future<PostersData> getFresh(String contentType, int page, int perPage) {
+  Future<PostersData> getFresh(String contentTypeId, int page, int perPage) {
     final params = {
-      "type": contentType,
+      "type": contentTypeId,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
     return _get("/v1/items/fresh", params, (j) => PostersData.fromJson(j));
   }
 
-  Future<PostersData> getPopular(String contentType, int page, int perPage) {
+  Future<PostersData> getPopular(String contentTypeId, int page, int perPage) {
     final params = {
-      "type": contentType,
+      "type": contentTypeId,
       "page": page.toString(),
       "perpage": perPage.toString(),
     };

@@ -1,5 +1,6 @@
 import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/genre_data.dart';
+import 'package:kino_player/services/poster_data.dart';
 import 'package:kino_player/services/kino_pub_api.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/services/country_data.dart';
@@ -43,25 +44,31 @@ class KinoPubService {
     return KinoPubApi.instance.getVoiceoverAuthors();
   }
 
-  static Future<CountriesData> getCountries() async {
+  static Future<CountriesData> getCountries() {
     return KinoPubApi.instance.getCountries();
   }
 
-  static PosterFetcher getHot(String contentType) {
+  static PosterFetcher getPosters(PostersRequestParams params) {
     return PosterFetcher((int page, int perPage) {
-      return KinoPubApi.instance.getHot(contentType, page, perPage);
+      return KinoPubApi.instance.getPosters(params, page, perPage);
     });
   }
 
-  static PosterFetcher getFresh(String contentType) {
+  static PosterFetcher getHot(String contentTypeId) {
     return PosterFetcher((int page, int perPage) {
-      return KinoPubApi.instance.getFresh(contentType, page, perPage);
+      return KinoPubApi.instance.getHot(contentTypeId, page, perPage);
     });
   }
 
-  static PosterFetcher getPopular(String contentType) {
+  static PosterFetcher getFresh(String contentTypeId) {
     return PosterFetcher((int page, int perPage) {
-      return KinoPubApi.instance.getPopular(contentType, page, perPage);
+      return KinoPubApi.instance.getFresh(contentTypeId, page, perPage);
+    });
+  }
+
+  static PosterFetcher getPopular(String contentTypeId) {
+    return PosterFetcher((int page, int perPage) {
+      return KinoPubApi.instance.getPopular(contentTypeId, page, perPage);
     });
   }
 }
