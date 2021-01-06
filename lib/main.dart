@@ -20,9 +20,7 @@ void main() {
         supportedLocales: S.delegate.supportedLocales,
         title: 'Kino player',
         theme: ThemeData(
-          focusColor: Colors.yellow[800],
-          splashColor: Colors.white70,
-          primarySwatch: Colors.blue,
+          brightness: Brightness.dark,
         ),
         home: PostersScreen(),
         debugShowCheckedModeBanner: false,
