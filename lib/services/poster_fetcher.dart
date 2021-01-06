@@ -4,7 +4,7 @@ typedef AsyncPostersCallback = Future<PostersData> Function(
     int page, int perPage);
 
 class PosterFetcher {
-  static const int _perPage = 8;
+  static const int _perPage = 25;
   final AsyncPostersCallback _callback;
   int _page = 0;
   int _total = 0;

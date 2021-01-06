@@ -11,5 +11,9 @@ class ContentTypesData {
   final List<ContentTypeData> items;
 
   ContentTypesData.fromJson(List<dynamic> json)
-      : items = json.map((item) => ContentTypeData.fromJson(item)).toList();
+      : items = json
+            .map((item) => ContentTypeData.fromJson(item))
+            // TODO: WTF?
+            .where((item) => item.id != "4k")
+            .toList();
 }
