@@ -1,2 +1,16 @@
 {
+  "error": "Ошибка: {error}",
+  "postersNavbarDays": "дней: {proDays}",
+  "previewViewFilm": "Смотреть фильм",
+  "previewTrailer": "Трейлер",
+  "previewYear": "Год",
+  "previewRating": "Рейтинг",
+  "previewCountry": "Страна",
+  "previewGenre": "Жанр",
+  "previewOriginalTitle": "Оригинальное название",
+  "previewDirector": "Режисер",
+  "previewActors": "В ролях",
+  "previewEpisodeDuration": "Время",
+  "previewComments": "Коментарии",
+  "previewMinutes": "{min} мин"
 }

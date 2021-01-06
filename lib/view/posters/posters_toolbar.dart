@@ -12,19 +12,16 @@ class PostersToolBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.menu),
-        tooltip: 'Navigation menu',
         onPressed: () => Scaffold.of(context).openDrawer(),
       ),
-      title: Text('Kino player'),
+      title: Text("Kino player"),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.search),
-          tooltip: 'Search',
           onPressed: null,
         ),
         IconButton(
           icon: Icon(Icons.sort),
-          tooltip: 'Sort',
           onPressed: null,
         ),
       ],

@@ -18,6 +18,9 @@ void main() {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: S.delegate.supportedLocales,
+        localeResolutionCallback: (locale, supportedLocales) {
+          return Locale.fromSubtags(languageCode: 'ru');
+        },
         title: 'Kino player',
         theme: ThemeData(
           brightness: Brightness.dark,

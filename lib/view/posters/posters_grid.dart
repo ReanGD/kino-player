@@ -61,6 +61,7 @@ class _PostersGridState extends State<PostersGrid> {
 
   void _fetch() {
     _fetchInProgress = true;
+    // TODO: process error
     _fetcher.getNext().then((List<PosterData> items) {
       setState(() {
         _posters.addAll(items);

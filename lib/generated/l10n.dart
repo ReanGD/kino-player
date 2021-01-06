@@ -35,7 +35,145 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Ошибка: {error}`
+  String error(Object error) {
+    return Intl.message(
+      'Ошибка: $error',
+      name: 'error',
+      desc: '',
+      args: [error],
+    );
+  }
 
+  /// `дней: {proDays}`
+  String postersNavbarDays(Object proDays) {
+    return Intl.message(
+      'дней: $proDays',
+      name: 'postersNavbarDays',
+      desc: '',
+      args: [proDays],
+    );
+  }
+
+  /// `Смотреть фильм`
+  String get previewViewFilm {
+    return Intl.message(
+      'Смотреть фильм',
+      name: 'previewViewFilm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Трейлер`
+  String get previewTrailer {
+    return Intl.message(
+      'Трейлер',
+      name: 'previewTrailer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Год`
+  String get previewYear {
+    return Intl.message(
+      'Год',
+      name: 'previewYear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Рейтинг`
+  String get previewRating {
+    return Intl.message(
+      'Рейтинг',
+      name: 'previewRating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Страна`
+  String get previewCountry {
+    return Intl.message(
+      'Страна',
+      name: 'previewCountry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Жанр`
+  String get previewGenre {
+    return Intl.message(
+      'Жанр',
+      name: 'previewGenre',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Оригинальное название`
+  String get previewOriginalTitle {
+    return Intl.message(
+      'Оригинальное название',
+      name: 'previewOriginalTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Режисер`
+  String get previewDirector {
+    return Intl.message(
+      'Режисер',
+      name: 'previewDirector',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `В ролях`
+  String get previewActors {
+    return Intl.message(
+      'В ролях',
+      name: 'previewActors',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Время`
+  String get previewEpisodeDuration {
+    return Intl.message(
+      'Время',
+      name: 'previewEpisodeDuration',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Коментарии`
+  String get previewComments {
+    return Intl.message(
+      'Коментарии',
+      name: 'previewComments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{min} мин`
+  String previewMinutes(Object min) {
+    return Intl.message(
+      '$min мин',
+      name: 'previewMinutes',
+      desc: '',
+      args: [min],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -43,8 +181,8 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale.fromSubtags(languageCode: 'en'),
       Locale.fromSubtags(languageCode: 'ru'),
+      Locale.fromSubtags(languageCode: 'en'),
     ];
   }
 

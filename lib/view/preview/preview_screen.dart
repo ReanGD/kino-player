@@ -11,21 +11,23 @@ class PreviewScreen extends StatelessWidget {
 
   PreviewScreen(this._contentData);
 
-  static String _formatDuration(Duration d) {
+  static String _formatDuration(S s, Duration d) {
     final h = d.inHours;
     final m = d.inMinutes;
+    final mStr = s.previewMinutes(m);
     if (h < 1) {
-      return "$m мин";
+      return mStr;
     }
 
     var modM = (m - h * 60).toString();
     if (modM.length == 1) {
       modM = "0" + modM;
     }
-    return "$h:$modM ($m мин)";
+    return "$h:$modM ($mStr)";
   }
 
   Widget _getView(BuildContext context) {
+    final s = S.of(context);
     final screenSize = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -75,68 +77,67 @@ class PreviewScreen extends StatelessWidget {
                   });
                   print("film");
                 },
-                child: Text("Смотреть фильм"),
+                child: Text(s.previewViewFilm),
               ),
               OutlinedButton(
                 focusNode: FocusNode(),
                 onPressed: () {
                   print("trailer");
                 },
-                child: Text("Трейлер"),
+                child: Text(s.previewTrailer),
               ),
               Text(_contentData.titleLocal),
               Text(_contentData.plot),
               Table(
                 children: [
-                  // TODO: Text(S.of(context).NameOfFilm),
                   TableRow(children: [
-                    Text("Год"),
+                    Text(s.previewYear),
                     TextButton(
                         onPressed: () => print("year"),
                         child: Text(_contentData.year.toString())),
                   ]),
                   TableRow(children: [
-                    Text("Рейтинг"),
+                    Text(s.previewRating),
                     Text(
                         "${_contentData.kinopoiskRating}, ${_contentData.imdbRating}, ${_contentData.kinopubRating}"),
                   ]),
                   TableRow(children: [
-                    Text("Страна"),
+                    Text(s.previewCountry),
                     TextButton(
-                        onPressed: () => print("cuntry"),
+                        onPressed: () => print("country"),
                         child: Text(_contentData.countries.items
                             .map((e) => e.title)
                             .join(","))),
                   ]),
                   TableRow(children: [
-                    Text("Жанр"),
+                    Text(s.previewGenre),
                     TextButton(
                         onPressed: () => print("genre"),
                         child: Text(
                             _contentData.genres.map((e) => e.title).join(","))),
                   ]),
                   TableRow(children: [
-                    Text("Оригинальное название"),
+                    Text(s.previewOriginalTitle),
                     Text(_contentData.titleOriginal),
                   ]),
                   TableRow(children: [
-                    Text("Режисер"),
+                    Text(s.previewDirector),
                     TextButton(
                         onPressed: () => print("director"),
                         child: Text(_contentData.directors.join(", "))),
                   ]),
                   TableRow(children: [
-                    Text("В ролях"),
+                    Text(s.previewActors),
                     TextButton(
                         onPressed: () => print("actors"),
                         child: Text(_contentData.actors.join(", "))),
                   ]),
                   TableRow(children: [
-                    Text("Время"),
-                    Text(_formatDuration(_contentData.averageDuration)),
+                    Text(s.previewEpisodeDuration),
+                    Text(_formatDuration(s, _contentData.averageDuration)),
                   ]),
                   TableRow(children: [
-                    Text("Коментарии"),
+                    Text(s.previewComments),
                     TextButton(
                         onPressed: () => print("comments"),
                         child: Text(_contentData.numberOfcomments.toString())),

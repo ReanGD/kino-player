@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:kino_player/generated/l10n.dart';
 import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/widgets/loader_indicator.dart';
@@ -58,7 +59,7 @@ class PostersNavbar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(data.username, style: theme.headline6),
-          Text("дней: ${data.proDays}"),
+          Text(S.of(context).postersNavbarDays(data.proDays)),
         ],
       ),
     );
@@ -101,7 +102,7 @@ class PostersNavbar extends StatelessWidget {
     );
   }
 
-  Widget _buildError(Object error) {
+  Widget _buildError(BuildContext context, Object error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +115,7 @@ class PostersNavbar extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 16),
-            child: Text('Error: $error'),
+            child: Text(S.of(context).error(error)),
           )
         ],
       ),
@@ -130,7 +131,7 @@ class PostersNavbar extends StatelessWidget {
           if (snapshot.hasData) {
             return _build(context, snapshot.data);
           } else if (snapshot.hasError) {
-            return _buildError(snapshot.error);
+            return _buildError(context, snapshot.error);
           }
           return LoaderIndicator();
         },

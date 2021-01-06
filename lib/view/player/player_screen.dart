@@ -57,9 +57,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Player"),
-      ),
       body: Stack(
         children: [
           Positioned.fill(
