@@ -124,10 +124,12 @@ class PostersData {
 }
 
 class PostersRequestParams {
-  String contentTypeId = "";
+  List<String> sort = [];
+  String contentTypeId;
 
-  PostersRequestParams({this.contentTypeId});
+  PostersRequestParams({this.sort, this.contentTypeId = ""});
 
   PostersRequestParams.clone(PostersRequestParams other)
-      : contentTypeId = other.contentTypeId;
+      : sort = other.sort,
+        contentTypeId = other.contentTypeId;
 }

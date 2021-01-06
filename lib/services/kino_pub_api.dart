@@ -179,6 +179,9 @@ class KinoPubApi {
       "page": page.toString(),
       "perpage": perPage.toString(),
     };
+    if (p.sort.length != 0) {
+      params["sort"] = p.sort.join(",");
+    }
     if (p.contentTypeId.isNotEmpty) {
       params["type"] = p.contentTypeId;
     }
