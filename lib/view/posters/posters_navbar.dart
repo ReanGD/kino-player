@@ -81,9 +81,10 @@ class PostersNavbar extends StatelessWidget {
   Widget _build(BuildContext context, _NavBarData data) {
     List<Widget> children = [_getHeader(context, data.userData), Divider()];
     final items = data.contentType.items;
+    final selectedId = _settings.contentTypeId;
     for (var i = 0; i != items.length; ++i) {
       children.add(ListTile(
-        autofocus: i == 0,
+        autofocus: selectedId.isEmpty ? i == 0 : selectedId == items[i].id,
         leading: Icon(Icons.verified_user),
         title: Text(items[i].title),
         onTap: () {
