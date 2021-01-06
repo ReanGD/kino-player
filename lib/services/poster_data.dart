@@ -60,6 +60,7 @@ class PosterData {
     } else if (posters["small"] != null) {
       return posters["small"];
     }
+    // TODO: add localization and new exception type
     throw Exception("Not found any poster");
   }
 

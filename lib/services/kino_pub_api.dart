@@ -22,6 +22,7 @@ class ApiException implements Exception {
 
   const ApiException(this.path, this.message);
 
+  // TODO: add localization
   String toString() => "API call $path finished with error: $message";
 }
 
@@ -29,6 +30,7 @@ class ApiAuthException implements Exception {
   final String path;
   const ApiAuthException(this.path);
 
+  // TODO: add localization
   String toString() => "API call $path finished with auth error";
 }
 
@@ -67,8 +69,10 @@ class KinoPubApi {
         HttpHeaders.contentTypeHeader: "application/json",
       });
     } on SocketException {
+      // TODO: add localization
       throw ApiException(path, "no internet connection");
     } on TimeoutException catch (e) {
+      // TODO: add localization
       throw ApiException(path, "connection timeout ($e)");
     } catch (e) {
       throw ApiException(path, e.toString());
@@ -77,6 +81,7 @@ class KinoPubApi {
     if (response.statusCode == 401) {
       throw ApiAuthException(path);
     } else if (response.statusCode != 200) {
+      // TODO: add localization
       throw ApiException(path, "status code = ${response.statusCode}");
     }
 
@@ -84,12 +89,14 @@ class KinoPubApi {
     try {
       jsonData = jsonDecode(response.body);
     } catch (e) {
+      // TODO: add localization
       throw ApiException(path, "failed parse json ($e)");
     }
 
     try {
       return ctor(jsonData);
     } catch (e) {
+      // TODO: add localization
       throw ApiException(path, "failed parse answer ($e)");
     }
   }

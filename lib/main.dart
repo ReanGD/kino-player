@@ -10,6 +10,7 @@ void main() {
       shortcuts: <LogicalKeySet, Intent>{
         LogicalKeySet(LogicalKeyboardKey.select): ActivateIntent(),
       },
+      // TODO: add handler see https://stackoverflow.com/questions/53334608/show-user-friendly-error-page-instead-of-exception-in-flutter
       child: MaterialApp(
         localizationsDelegates: [
           S.delegate,
@@ -21,6 +22,7 @@ void main() {
         localeResolutionCallback: (locale, supportedLocales) {
           return Locale.fromSubtags(languageCode: 'ru');
         },
+        // TODO: add localization?
         title: 'Kino player',
         theme: ThemeData(
           brightness: Brightness.dark,

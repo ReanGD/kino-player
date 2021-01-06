@@ -17,6 +17,7 @@ class VideoFileData {
 
   String getUrl(String streamCode) {
     if (!urls.containsKey(streamCode)) {
+      // TODO: add new exception type and localization
       throw Exception("Not found video file for stream type $streamCode");
     }
 
