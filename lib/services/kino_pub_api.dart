@@ -15,6 +15,7 @@ import 'package:kino_player/services/stream_type_data.dart';
 import 'package:kino_player/services/video_quality_data.dart';
 import 'package:kino_player/services/server_location_data.dart';
 import 'package:kino_player/services/voiceover_author_data.dart';
+import 'package:kino_player/services/poster_sort_field_data.dart';
 
 class ApiException implements Exception {
   final String path;
@@ -51,6 +52,7 @@ class KinoPubApi {
   var _voiceoversCache = _CacheValue<VoiceoversData>();
   var _voiceoverAuthorsCache = _CacheValue<VoiceoverAuthorsData>();
   var _countriesCache = _CacheValue<CountriesData>();
+  var _posterSortFieldsCache = _CacheValue<PosterSortFieldsData>();
 
   KinoPubApi._() : _authHeader = "Bearer $token";
 
@@ -106,11 +108,10 @@ class KinoPubApi {
     _CacheValue<T> cacheValue,
     T ctor(Map<String, dynamic> _),
   ) async {
-    if (cacheValue.isFilled) {
-      return cacheValue.value;
+    if (!cacheValue.isFilled) {
+      cacheValue.value = await _get(path, Map<String, String>(), ctor);
+      cacheValue.isFilled = true;
     }
-    cacheValue.value = await _get(path, Map<String, String>(), ctor);
-    cacheValue.isFilled = true;
     return cacheValue.value;
   }
 
@@ -159,6 +160,22 @@ class KinoPubApi {
   Future<CountriesData> getCountries() {
     return _getWithCache("/v1/countries", _countriesCache,
         (j) => CountriesData.fromJson(j["items"]));
+  }
+
+  PosterSortFieldsData getPosterSortFields() {
+    if (!_posterSortFieldsCache.isFilled) {
+      try {
+        _posterSortFieldsCache.value = PosterSortFieldsData();
+      } catch (e) {
+        // TODO: add localization
+        throw ApiException(
+            "local/PosterSortFields", "failed to init directory ($e)");
+      }
+
+      _posterSortFieldsCache.isFilled = true;
+    }
+
+    return _posterSortFieldsCache.value;
   }
 
   Future<VideoFilesData> getVideoFiles(int mediaId) {

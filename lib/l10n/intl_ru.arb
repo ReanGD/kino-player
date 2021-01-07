@@ -12,5 +12,7 @@
   "previewActors": "В ролях",
   "previewEpisodeDuration": "Время",
   "previewComments": "Коментарии",
-  "previewMinutes": "{min} мин"
+  "previewMinutes": "{min} мин",
+  "posterSortFieldDataByKinopoiskRating": "По рейтингу кинопоиска",
+  "posterSortFieldDataByIMDbRating": "По рейтингу IMDb"
 }

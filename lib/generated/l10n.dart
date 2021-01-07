@@ -174,6 +174,26 @@ class S {
       args: [min],
     );
   }
+
+  /// `По рейтингу кинопоиска`
+  String get posterSortFieldDataByKinopoiskRating {
+    return Intl.message(
+      'По рейтингу кинопоиска',
+      name: 'posterSortFieldDataByKinopoiskRating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `По рейтингу IMDb`
+  String get posterSortFieldDataByIMDbRating {
+    return Intl.message(
+      'По рейтингу IMDb',
+      name: 'posterSortFieldDataByIMDbRating',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

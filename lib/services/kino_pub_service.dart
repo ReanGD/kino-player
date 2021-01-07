@@ -10,6 +10,7 @@ import 'package:kino_player/services/stream_type_data.dart';
 import 'package:kino_player/services/video_quality_data.dart';
 import 'package:kino_player/services/server_location_data.dart';
 import 'package:kino_player/services/voiceover_author_data.dart';
+import 'package:kino_player/services/poster_sort_field_data.dart';
 
 class KinoPubService {
   static Future<UserData> getUser() async {
@@ -46,6 +47,10 @@ class KinoPubService {
 
   static Future<CountriesData> getCountries() {
     return KinoPubApi.instance.getCountries();
+  }
+
+  static PosterSortFieldsData getPosterSortFields() {
+    return KinoPubApi.instance.getPosterSortFields();
   }
 
   static PosterFetcher getPosters(PostersRequestParams params) {
