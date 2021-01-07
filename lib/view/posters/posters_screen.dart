@@ -11,7 +11,7 @@ class PostersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PostersToolBar(),
+      appBar: PostersToolBar(_settings),
       drawer: PostersNavbar(_settings),
       body: PostersGrid(_settings),
     );
