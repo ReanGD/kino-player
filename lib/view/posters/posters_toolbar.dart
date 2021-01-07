@@ -4,6 +4,7 @@ import 'package:kino_player/services/kino_pub_service.dart';
 import 'package:kino_player/view/posters/posters_settings.dart';
 
 const double _kToolbarHeight = 56.0;
+const double _kDropdownIconLeftPadding = 10.0;
 
 class _PostersSortField extends StatefulWidget {
   final PostersSettings _settings;
@@ -20,7 +21,7 @@ class _PostersSortFieldState extends State<_PostersSortField> {
     return DropdownButton<String>(
       value: widget._settings.sortFirst,
       icon: Padding(
-        padding: EdgeInsets.only(left: 10.0),
+        padding: EdgeInsets.only(left: _kDropdownIconLeftPadding),
         child: Icon(Icons.sort),
       ),
       underline: const SizedBox.shrink(),
@@ -61,7 +62,7 @@ class PostersToolBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: Icon(Icons.search),
           onPressed: null,
-        ),
+        )
       ],
     );
   }

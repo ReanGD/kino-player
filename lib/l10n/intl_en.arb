@@ -13,6 +13,7 @@
   "previewEpisodeDuration": "Время",
   "previewComments": "Коментарии",
   "previewMinutes": "{min} мин",
-  "posterSortFieldDataByKinopoiskRating": "По рейтингу кинопоиска",
-  "posterSortFieldDataByIMDbRating": "По рейтингу IMDb"
+  "posterSortFieldDataTopKinopoisk": "Топ кинопоиска",
+  "posterSortFieldDataTopIMDb": "Топ IMDb",
+  "posterSortFieldDataNewKinopub": "Новое на Kinopub"
 }

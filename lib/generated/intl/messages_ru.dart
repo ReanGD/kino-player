@@ -28,8 +28,9 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "error" : m0,
-    "posterSortFieldDataByIMDbRating" : MessageLookupByLibrary.simpleMessage("По рейтингу IMDb"),
-    "posterSortFieldDataByKinopoiskRating" : MessageLookupByLibrary.simpleMessage("По рейтингу кинопоиска"),
+    "posterSortFieldDataNewKinopub" : MessageLookupByLibrary.simpleMessage("Новое на Kinopub"),
+    "posterSortFieldDataTopIMDb" : MessageLookupByLibrary.simpleMessage("Топ IMDb"),
+    "posterSortFieldDataTopKinopoisk" : MessageLookupByLibrary.simpleMessage("Топ кинопоиска"),
     "postersNavbarDays" : m1,
     "previewActors" : MessageLookupByLibrary.simpleMessage("В ролях"),
     "previewComments" : MessageLookupByLibrary.simpleMessage("Коментарии"),

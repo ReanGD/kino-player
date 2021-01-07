@@ -175,21 +175,31 @@ class S {
     );
   }
 
-  /// `По рейтингу кинопоиска`
-  String get posterSortFieldDataByKinopoiskRating {
+  /// `Топ кинопоиска`
+  String get posterSortFieldDataTopKinopoisk {
     return Intl.message(
-      'По рейтингу кинопоиска',
-      name: 'posterSortFieldDataByKinopoiskRating',
+      'Топ кинопоиска',
+      name: 'posterSortFieldDataTopKinopoisk',
       desc: '',
       args: [],
     );
   }
 
-  /// `По рейтингу IMDb`
-  String get posterSortFieldDataByIMDbRating {
+  /// `Топ IMDb`
+  String get posterSortFieldDataTopIMDb {
     return Intl.message(
-      'По рейтингу IMDb',
-      name: 'posterSortFieldDataByIMDbRating',
+      'Топ IMDb',
+      name: 'posterSortFieldDataTopIMDb',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Новое на Kinopub`
+  String get posterSortFieldDataNewKinopub {
+    return Intl.message(
+      'Новое на Kinopub',
+      name: 'posterSortFieldDataNewKinopub',
       desc: '',
       args: [],
     );

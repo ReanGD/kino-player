@@ -12,11 +12,12 @@ class PosterSortFieldsData {
   static const defaultId = "-kinopoisk_rating";
 
   static List<PosterSortFieldData> _init() {
+    final s = S.current;
     List<PosterSortFieldData> items = [];
     items.add(PosterSortFieldData(
-        "kinopoisk_rating", S.current.posterSortFieldDataByKinopoiskRating));
-    items.add(PosterSortFieldData(
-        "imdb_rating", S.current.posterSortFieldDataByIMDbRating));
+        "kinopoisk_rating", s.posterSortFieldDataTopKinopoisk));
+    items.add(PosterSortFieldData("imdb_rating", s.posterSortFieldDataTopIMDb));
+    items.add(PosterSortFieldData("created", s.posterSortFieldDataNewKinopub));
 
     return items;
   }
