@@ -9,6 +9,7 @@ class ContentTypeData {
 
 class ContentTypesData {
   final List<ContentTypeData> items;
+  static const defaultId = "movie";
 
   ContentTypesData.fromJson(List<dynamic> json)
       : items = json

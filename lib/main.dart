@@ -20,10 +20,10 @@ void main() {
         ],
         supportedLocales: S.delegate.supportedLocales,
         localeResolutionCallback: (locale, supportedLocales) {
-          return Locale.fromSubtags(languageCode: 'ru');
+          return Locale.fromSubtags(languageCode: "ru");
         },
         // TODO: add localization?
-        title: 'Kino player',
+        title: "Kino player",
         theme: ThemeData(
           brightness: Brightness.dark,
         ),
