@@ -7,6 +7,8 @@ import 'package:kino_player/widgets/loader_indicator.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
 import 'package:kino_player/view/posters/posters_settings.dart';
 
+const _kMaxItemWidth = 180.0;
+
 class _GridOrderPolicy extends OrderedTraversalPolicy {
   final VoidCallback _driwerOpener;
 
@@ -61,7 +63,7 @@ class _PostersGridState extends State<PostersGrid> {
 
   void _fetch() {
     _fetchInProgress = true;
-    // TODO: process error
+    // TODO: add process error
     _fetcher.getNext().then((List<PosterData> items) {
       setState(() {
         _posters.addAll(items);
@@ -76,12 +78,17 @@ class _PostersGridState extends State<PostersGrid> {
       return LoaderIndicator();
     }
 
+    final widgetWidth = (context.findRenderObject() as RenderBox).size.width;
+    final itemsCount = (widgetWidth / _kMaxItemWidth).ceil();
+    final itemWidth = widgetWidth / itemsCount;
+
     return FocusTraversalGroup(
       policy: _GridOrderPolicy(() => Scaffold.of(context).openDrawer()),
       child: GridView.builder(
         itemCount: _fetcher.total,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 300,
+          maxCrossAxisExtent: itemWidth,
+          childAspectRatio: PosterView.calcAspectRatio(itemWidth),
           mainAxisSpacing: 0,
           crossAxisSpacing: 0,
         ),
@@ -93,7 +100,7 @@ class _PostersGridState extends State<PostersGrid> {
             return LoaderIndicator();
           }
 
-          return PosterView(index == 0, _posters[index]);
+          return PosterView(index == 0, itemWidth, _posters[index]);
         },
       ),
     );
