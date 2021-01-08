@@ -39,6 +39,10 @@ class PosterData {
   final bool serialFinished;
   final bool existsAds;
   final bool isPoorQuality;
+  // created on kinopub
+  final DateTime createdAt;
+  // updated on kinopub
+  final DateTime updatedAt;
   final bool isUserSubscribed;
 
   static String _getTitle(String s, bool isLocal) {
@@ -105,6 +109,12 @@ class PosterData {
         serialFinished = json["finished"],
         existsAds = json["advert"],
         isPoorQuality = json["poor_quality"],
+        createdAt = json["created_at"] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(json["created_at"] * 1000),
+        updatedAt = json["updated_at"] == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(json["updated_at"] * 1000),
         isUserSubscribed = json["subscribed"];
 
   Future<ContentData> getContent() {

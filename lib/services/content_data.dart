@@ -67,6 +67,8 @@ class ContentData {
   bool get serialFinished => _posterData.serialFinished;
   bool get existsAds => _posterData.existsAds;
   bool get isPoorQuality => _posterData.isPoorQuality;
+  DateTime get createdAt => _posterData.createdAt;
+  DateTime get updatedAt => _posterData.updatedAt;
   bool get isUserSubscribed => _posterData.isUserSubscribed;
 
   ContentData.fromJson(this._posterData, Map<String, dynamic> json)
