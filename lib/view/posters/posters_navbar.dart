@@ -24,14 +24,14 @@ class _NavBarData {
 class PostersNavbar extends StatelessWidget {
   final Future<_NavBarData> _data;
   final PostersSettings _settings;
-  static const _defaultAvatarImage =
+  static const _defaultAvatarAsset =
       AssetImage("assets/graphics/anonymous.png");
 
   PostersNavbar(this._settings) : _data = _NavBarData.asyncLoad();
 
   Widget _getDefaultAvatar() {
     return Image(
-      image: _defaultAvatarImage,
+      image: _defaultAvatarAsset,
       width: 60,
       fit: BoxFit.contain,
     );
