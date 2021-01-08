@@ -204,6 +204,86 @@ class S {
       args: [],
     );
   }
+
+  /// `отсутствует подключение к интернету`
+  String get apiNoInternetConnection {
+    return Intl.message(
+      'отсутствует подключение к интернету',
+      name: 'apiNoInternetConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `таймаут подключения истёк ({errorMessage})`
+  String apiConnectionTimeout(Object errorMessage) {
+    return Intl.message(
+      'таймаут подключения истёк ($errorMessage)',
+      name: 'apiConnectionTimeout',
+      desc: '',
+      args: [errorMessage],
+    );
+  }
+
+  /// `не успешный код возврата = {statusCode}`
+  String apiWrongStatusCode(Object statusCode) {
+    return Intl.message(
+      'не успешный код возврата = $statusCode',
+      name: 'apiWrongStatusCode',
+      desc: '',
+      args: [statusCode],
+    );
+  }
+
+  /// `не удалось распарсить json ({errorMessage})`
+  String apiJsonParseError(Object errorMessage) {
+    return Intl.message(
+      'не удалось распарсить json ($errorMessage)',
+      name: 'apiJsonParseError',
+      desc: '',
+      args: [errorMessage],
+    );
+  }
+
+  /// `не удалось распарсить ответ ({errorMessage})`
+  String apiAnswerParseError(Object errorMessage) {
+    return Intl.message(
+      'не удалось распарсить ответ ($errorMessage)',
+      name: 'apiAnswerParseError',
+      desc: '',
+      args: [errorMessage],
+    );
+  }
+
+  /// `API вызов {path} завершился с ошибкой {errorMessage}`
+  String apiCallFinishedWithError(Object path, Object errorMessage) {
+    return Intl.message(
+      'API вызов $path завершился с ошибкой $errorMessage',
+      name: 'apiCallFinishedWithError',
+      desc: '',
+      args: [path, errorMessage],
+    );
+  }
+
+  /// `API вызов {path} завершился с ошибкой aутентификация`
+  String apiAuthError(Object path) {
+    return Intl.message(
+      'API вызов $path завершился с ошибкой aутентификация',
+      name: 'apiAuthError',
+      desc: '',
+      args: [path],
+    );
+  }
+
+  /// `загрузка локального справочника заверилось с ошибкой ({errorMessage})`
+  String apiLocalReferenceInitError(Object errorMessage) {
+    return Intl.message(
+      'загрузка локального справочника заверилось с ошибкой ($errorMessage)',
+      name: 'apiLocalReferenceInitError',
+      desc: '',
+      args: [errorMessage],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

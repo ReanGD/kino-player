@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kino_player/services/token.dart';
+import 'package:kino_player/generated/l10n.dart';
 import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/genre_data.dart';
 import 'package:kino_player/services/poster_data.dart';
@@ -23,16 +24,15 @@ class ApiException implements Exception {
 
   const ApiException(this.path, this.message);
 
-  // TODO: add localization
-  String toString() => "API call $path finished with error: $message";
+  String toString() => S.current.apiCallFinishedWithError(path, message);
 }
 
 class ApiAuthException implements Exception {
   final String path;
+
   const ApiAuthException(this.path);
 
-  // TODO: add localization
-  String toString() => "API call $path finished with auth error";
+  String toString() => S.current.apiAuthError(path);
 }
 
 class _CacheValue<T> {
@@ -71,11 +71,9 @@ class KinoPubApi {
         HttpHeaders.contentTypeHeader: "application/json",
       });
     } on SocketException {
-      // TODO: add localization
-      throw ApiException(path, "no internet connection");
+      throw ApiException(path, S.current.apiNoInternetConnection);
     } on TimeoutException catch (e) {
-      // TODO: add localization
-      throw ApiException(path, "connection timeout ($e)");
+      throw ApiException(path, S.current.apiConnectionTimeout(e.toString()));
     } catch (e) {
       throw ApiException(path, e.toString());
     }
@@ -83,23 +81,21 @@ class KinoPubApi {
     if (response.statusCode == 401) {
       throw ApiAuthException(path);
     } else if (response.statusCode != 200) {
-      // TODO: add localization
-      throw ApiException(path, "status code = ${response.statusCode}");
+      throw ApiException(
+          path, S.current.apiWrongStatusCode(response.statusCode));
     }
 
     Map<String, dynamic> jsonData;
     try {
       jsonData = jsonDecode(response.body);
     } catch (e) {
-      // TODO: add localization
-      throw ApiException(path, "failed parse json ($e)");
+      throw ApiException(path, S.current.apiJsonParseError(e.toString()));
     }
 
     try {
       return ctor(jsonData);
     } catch (e) {
-      // TODO: add localization
-      throw ApiException(path, "failed parse answer ($e)");
+      throw ApiException(path, S.current.apiAnswerParseError(e.toString()));
     }
   }
 
@@ -167,9 +163,8 @@ class KinoPubApi {
       try {
         _posterSortFieldsCache.value = PosterSortFieldsData();
       } catch (e) {
-        // TODO: add localization
-        throw ApiException(
-            "local/PosterSortFields", "failed to init directory ($e)");
+        throw ApiException("local/PosterSortFields",
+            S.current.apiLocalReferenceInitError(e.toString()));
       }
 
       _posterSortFieldsCache.isFilled = true;

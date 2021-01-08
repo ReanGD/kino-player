@@ -15,5 +15,13 @@
   "previewMinutes": "{min} мин",
   "posterSortFieldDataTopKinopoisk": "Топ кинопоиска",
   "posterSortFieldDataTopIMDb": "Топ IMDb",
-  "posterSortFieldDataNewKinopub": "Новое на Kinopub"
+  "posterSortFieldDataNewKinopub": "Новое на Kinopub",
+  "apiNoInternetConnection": "отсутствует подключение к интернету",
+  "apiConnectionTimeout": "таймаут подключения истёк ({errorMessage})",
+  "apiWrongStatusCode": "не успешный код возврата = {statusCode}",
+  "apiJsonParseError": "не удалось распарсить json ({errorMessage})",
+  "apiAnswerParseError": "не удалось распарсить ответ ({errorMessage})",
+  "apiCallFinishedWithError": "API вызов {path} завершился с ошибкой {errorMessage}",
+  "apiAuthError": "API вызов {path} завершился с ошибкой aутентификация",
+  "apiLocalReferenceInitError": "загрузка локального справочника заверилось с ошибкой ({errorMessage})"
 }
