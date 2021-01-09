@@ -31,12 +31,10 @@ class PosterView extends StatelessWidget {
   PosterView(this._isAutofocus, this._itemWidth, this._posterData);
 
   void _openPreviewScreen(BuildContext context) {
-    _posterData.getContent().then((contentData) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PreviewScreen(contentData)),
-      );
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PreviewScreen(_posterData)),
+    );
   }
 
   Widget _getPlatformIcon(AssetImage asset) {
