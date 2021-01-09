@@ -97,6 +97,23 @@ class PosterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _getView();
+    return Focus(
+      autofocus: _isAutofocus,
+      child: Builder(
+        builder: (BuildContext context) {
+          if (Focus.of(context).hasPrimaryFocus) {
+            return ColoredBox(
+              color: const Color(0xFFE5E5E5),
+              child: DefaultTextStyle(
+                style: TextStyle(color: Colors.black),
+                child: _getView(),
+              ),
+            );
+          }
+
+          return _getView();
+        },
+      ),
+    );
   }
 }
