@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:kino_player/utils/assets.dart';
 import 'package:kino_player/generated/l10n.dart';
 import 'package:kino_player/services/user_data.dart';
 import 'package:kino_player/services/content_type.dart';
@@ -24,14 +25,12 @@ class _NavBarData {
 class PostersNavbar extends StatelessWidget {
   final Future<_NavBarData> _data;
   final PostersSettings _settings;
-  static const _defaultAvatarAsset =
-      AssetImage("assets/graphics/anonymous.png");
 
   PostersNavbar(this._settings) : _data = _NavBarData.asyncLoad();
 
   Widget _getDefaultAvatar() {
     return Image(
-      image: _defaultAvatarAsset,
+      image: GraphicsAssets.defaultAvatarAsset,
       width: 60,
       fit: BoxFit.contain,
     );
