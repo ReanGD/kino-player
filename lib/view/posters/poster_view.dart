@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +29,15 @@ class PosterView extends StatelessWidget {
   final PosterData _posterData;
 
   PosterView(this._isAutofocus, this._itemWidth, this._posterData);
+
+  void _openPreviewScreen(BuildContext context) {
+    _posterData.getContent().then((contentData) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PreviewScreen(contentData)),
+      );
+    });
+  }
 
   Widget _getPlatformIcon(AssetImage asset) {
     return Padding(
@@ -99,20 +107,30 @@ class PosterView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Focus(
       autofocus: _isAutofocus,
-      child: Builder(
-        builder: (BuildContext context) {
-          if (Focus.of(context).hasPrimaryFocus) {
-            return ColoredBox(
-              color: const Color(0xFFE5E5E5),
-              child: DefaultTextStyle(
-                style: TextStyle(color: Colors.black),
-                child: _getView(),
-              ),
-            );
-          }
+      onKey: (FocusNode node, RawKeyEvent event) {
+        if (isKeySelectPressed(event)) {
+          _openPreviewScreen(context);
+          return true;
+        }
+        return false;
+      },
+      child: GestureDetector(
+        onTap: () => _openPreviewScreen(context),
+        child: Builder(
+          builder: (BuildContext context) {
+            if (Focus.of(context).hasPrimaryFocus) {
+              return ColoredBox(
+                color: Colors.grey[300],
+                child: DefaultTextStyle(
+                  style: TextStyle(color: Colors.black87),
+                  child: _getView(),
+                ),
+              );
+            }
 
-          return _getView();
-        },
+            return _getView();
+          },
+        ),
       ),
     );
   }
