@@ -2,10 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:kino_player/generated/l10n.dart';
 
-class LoadError extends StatelessWidget {
+class LoaderError extends StatelessWidget {
   final Object _error;
 
-  LoadError(this._error);
+  LoaderError(this._error);
 
   @override
   Widget build(BuildContext context) {

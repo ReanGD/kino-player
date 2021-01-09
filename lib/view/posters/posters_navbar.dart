@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:kino_player/utils/assets.dart';
 import 'package:kino_player/generated/l10n.dart';
 import 'package:kino_player/services/user_data.dart';
-import 'package:kino_player/widgets/load_error.dart';
 import 'package:kino_player/services/content_type.dart';
-import 'package:kino_player/widgets/loader_indicator.dart';
+import 'package:kino_player/widgets/future_widget.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:kino_player/view/posters/posters_settings.dart';
@@ -24,10 +23,10 @@ class _NavBarData {
 }
 
 class PostersNavbar extends StatelessWidget {
-  final Future<_NavBarData> _data;
+  final Future<_NavBarData> _futureData;
   final PostersSettings _settings;
 
-  PostersNavbar(this._settings) : _data = _NavBarData.asyncLoad();
+  PostersNavbar(this._settings) : _futureData = _NavBarData.asyncLoad();
 
   Widget _getDefaultAvatar() {
     return Image(
@@ -105,16 +104,9 @@ class PostersNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: FutureBuilder<_NavBarData>(
-        future: _data,
-        builder: (BuildContext context, AsyncSnapshot<_NavBarData> snapshot) {
-          if (snapshot.hasData) {
-            return _build(context, snapshot.data);
-          } else if (snapshot.hasError) {
-            return LoadError(snapshot.error);
-          }
-          return LoaderIndicator();
-        },
+      child: FutureWidget<_NavBarData>(
+        future: _futureData,
+        builder: _build,
       ),
     );
   }
