@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kino_player/utils/assets.dart';
 import 'package:kino_player/generated/l10n.dart';
 import 'package:kino_player/services/user_data.dart';
+import 'package:kino_player/widgets/load_error.dart';
 import 'package:kino_player/services/content_type.dart';
 import 'package:kino_player/widgets/loader_indicator.dart';
 import 'package:kino_player/services/kino_pub_service.dart';
@@ -101,26 +102,6 @@ class PostersNavbar extends StatelessWidget {
     );
   }
 
-  Widget _buildError(BuildContext context, Object error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            color: Colors.red,
-            size: 60,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Text(S.of(context).error(error)),
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -130,7 +111,7 @@ class PostersNavbar extends StatelessWidget {
           if (snapshot.hasData) {
             return _build(context, snapshot.data);
           } else if (snapshot.hasError) {
-            return _buildError(context, snapshot.error);
+            return LoadError(snapshot.error);
           }
           return LoaderIndicator();
         },
