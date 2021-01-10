@@ -23,10 +23,9 @@ class _NavBarData {
 }
 
 class PostersNavbar extends StatelessWidget {
-  final Future<_NavBarData> _futureData;
   final PostersSettings _settings;
 
-  PostersNavbar(this._settings) : _futureData = _NavBarData.asyncLoad();
+  PostersNavbar(this._settings);
 
   Widget _getDefaultAvatar() {
     return Image(
@@ -105,7 +104,7 @@ class PostersNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: FutureWidget<_NavBarData>(
-        future: _futureData,
+        future: () => _NavBarData.asyncLoad(),
         builder: _build,
       ),
     );

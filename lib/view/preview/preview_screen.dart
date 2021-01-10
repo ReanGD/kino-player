@@ -6,16 +6,15 @@ import 'package:kino_player/widgets/future_widget.dart';
 import 'package:kino_player/view/preview/preview_view.dart';
 
 class PreviewScreen extends StatelessWidget {
-  final Future<ContentData> _contentDataFuture;
+  final PosterData _posterData;
 
-  PreviewScreen(PosterData posterData)
-      : _contentDataFuture = posterData.getContent();
+  PreviewScreen(this._posterData);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureWidget<ContentData>(
-        future: _contentDataFuture,
+        future: () => _posterData.getContent(),
         builder: (context, data) => PreviewView(data),
       ),
     );
