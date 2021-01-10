@@ -72,7 +72,7 @@ class ContentData {
   bool get isUserSubscribed => _posterData.isUserSubscribed;
 
   ContentData.fromJson(this._posterData, Map<String, dynamic> json)
-      : trailer = json.containsKey("trailer") ? json["trailer"]["url"] : null,
+      : trailer = json["trailer"] != null ? json["trailer"]["url"] : null,
         seasons = json.containsKey("videos")
             ? {1: SeasonData.fromJson(1, json["videos"])}
             : Map.fromIterable(
