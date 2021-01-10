@@ -45,6 +45,16 @@ class S {
     );
   }
 
+  /// `Повторить попытку`
+  String get retry {
+    return Intl.message(
+      'Повторить попытку',
+      name: 'retry',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `дней: {proDays}`
   String postersNavbarDays(Object proDays) {
     return Intl.message(

@@ -65,6 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "previewRating" : MessageLookupByLibrary.simpleMessage("Рейтинг"),
     "previewTrailer" : MessageLookupByLibrary.simpleMessage("Трейлер"),
     "previewViewFilm" : MessageLookupByLibrary.simpleMessage("Смотреть фильм"),
-    "previewYear" : MessageLookupByLibrary.simpleMessage("Год")
+    "previewYear" : MessageLookupByLibrary.simpleMessage("Год"),
+    "retry" : MessageLookupByLibrary.simpleMessage("Повторить попытку")
   };
 }

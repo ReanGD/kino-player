@@ -1,5 +1,6 @@
 {
   "error": "Ошибка: {error}",
+  "retry": "Повторить попытку",
   "postersNavbarDays": "дней: {proDays}",
   "previewViewFilm": "Смотреть фильм",
   "previewTrailer": "Трейлер",
