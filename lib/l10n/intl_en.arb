@@ -18,10 +18,10 @@
   "posterSortFieldDataNewKinopub": "Новое на Kinopub",
   "apiNoInternetConnection": "отсутствует подключение к интернету",
   "apiConnectionTimeout": "таймаут подключения истёк ({errorMessage})",
-  "apiWrongStatusCode": "не успешный код возврата = {statusCode}",
+  "apiWrongStatusCode": "неуспешный код возврата = {statusCode}",
   "apiJsonParseError": "не удалось распарсить json ({errorMessage})",
   "apiAnswerParseError": "не удалось распарсить ответ ({errorMessage})",
-  "apiCallFinishedWithError": "API вызов {path} завершился с ошибкой {errorMessage}",
+  "apiCallFinishedWithError": "API вызов {path} завершился с ошибкой, {errorMessage}",
   "apiAuthError": "API вызов {path} завершился с ошибкой aутентификация",
-  "apiLocalReferenceInitError": "загрузка локального справочника заверилось с ошибкой ({errorMessage})"
+  "apiLocalReferenceInitError": "загрузка локального справочника заверилось с ошибкой, ({errorMessage})"
 }

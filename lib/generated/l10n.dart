@@ -225,10 +225,10 @@ class S {
     );
   }
 
-  /// `не успешный код возврата = {statusCode}`
+  /// `неуспешный код возврата = {statusCode}`
   String apiWrongStatusCode(Object statusCode) {
     return Intl.message(
-      'не успешный код возврата = $statusCode',
+      'неуспешный код возврата = $statusCode',
       name: 'apiWrongStatusCode',
       desc: '',
       args: [statusCode],
@@ -255,10 +255,10 @@ class S {
     );
   }
 
-  /// `API вызов {path} завершился с ошибкой {errorMessage}`
+  /// `API вызов {path} завершился с ошибкой, {errorMessage}`
   String apiCallFinishedWithError(Object path, Object errorMessage) {
     return Intl.message(
-      'API вызов $path завершился с ошибкой $errorMessage',
+      'API вызов $path завершился с ошибкой, $errorMessage',
       name: 'apiCallFinishedWithError',
       desc: '',
       args: [path, errorMessage],
@@ -275,10 +275,10 @@ class S {
     );
   }
 
-  /// `загрузка локального справочника заверилось с ошибкой ({errorMessage})`
+  /// `загрузка локального справочника заверилось с ошибкой, ({errorMessage})`
   String apiLocalReferenceInitError(Object errorMessage) {
     return Intl.message(
-      'загрузка локального справочника заверилось с ошибкой ($errorMessage)',
+      'загрузка локального справочника заверилось с ошибкой, ($errorMessage)',
       name: 'apiLocalReferenceInitError',
       desc: '',
       args: [errorMessage],

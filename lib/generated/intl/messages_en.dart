@@ -23,15 +23,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static m1(path) => "API вызов ${path} завершился с ошибкой aутентификация";
 
-  static m2(path, errorMessage) => "API вызов ${path} завершился с ошибкой ${errorMessage}";
+  static m2(path, errorMessage) => "API вызов ${path} завершился с ошибкой, ${errorMessage}";
 
   static m3(errorMessage) => "таймаут подключения истёк (${errorMessage})";
 
   static m4(errorMessage) => "не удалось распарсить json (${errorMessage})";
 
-  static m5(errorMessage) => "загрузка локального справочника заверилось с ошибкой (${errorMessage})";
+  static m5(errorMessage) => "загрузка локального справочника заверилось с ошибкой, (${errorMessage})";
 
-  static m6(statusCode) => "не успешный код возврата = ${statusCode}";
+  static m6(statusCode) => "неуспешный код возврата = ${statusCode}";
 
   static m7(error) => "Ошибка: ${error}";
 
