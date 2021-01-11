@@ -4,15 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:kino_player/utils/keys.dart';
 import 'package:kino_player/utils/assets.dart';
 import 'package:kino_player/services/poster_data.dart';
+import 'package:kino_player/widgets/platform_icon.dart';
 import 'package:kino_player/view/preview/preview_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 const double _kTextHeight = 29.0;
 const double _kOriginImageWidth = 165.0;
 const double _kOriginImageHeight = 250.0;
-const double _kPlatformIconSize = 19.0;
 const double _kImageBorderRadius = 5.0;
-const kImagePadding =
+const _kRatingTextStyle = const TextStyle(fontWeight: FontWeight.w300);
+const _kImagePadding =
     const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 2);
 
 class PosterView extends StatelessWidget {
@@ -37,30 +38,15 @@ class PosterView extends StatelessWidget {
     );
   }
 
-  Widget _getPlatformIcon(AssetImage asset) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 5,
-        right: 5,
-      ),
-      child: Image(
-        image: asset,
-        width: _kPlatformIconSize,
-        height: _kPlatformIconSize,
-      ),
-    );
-  }
-
   Widget _getPlatformRating(double rating) {
-    return Text(rating.toStringAsFixed(1),
-        style: const TextStyle(fontWeight: FontWeight.w300));
+    return Text(rating.toStringAsFixed(1), style: _kRatingTextStyle);
   }
 
   Widget _getView() {
     return Column(
       children: [
         Padding(
-          padding: kImagePadding,
+          padding: _kImagePadding,
           child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
@@ -70,8 +56,8 @@ class PosterView extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: _posterData.posterSmall,
               errorWidget: (context, url, error) => Icon(Icons.error),
-              width: _itemWidth - kImagePadding.horizontal,
-              height: calcImageHeight(_itemWidth - kImagePadding.horizontal),
+              width: _itemWidth - _kImagePadding.horizontal,
+              height: calcImageHeight(_itemWidth - _kImagePadding.horizontal),
               fit: BoxFit.fitWidth,
             ),
           ),
@@ -87,11 +73,10 @@ class PosterView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(_posterData.year.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.w300)),
-                _getPlatformIcon(GraphicsAssets.kinopoiskAsset),
+                Text(_posterData.year.toString(), style: _kRatingTextStyle),
+                PlatformIcon(GraphicsAssets.kinopoiskAsset),
                 _getPlatformRating(_posterData.kinopoiskRating),
-                _getPlatformIcon(GraphicsAssets.imdbAsset),
+                PlatformIcon(GraphicsAssets.imdbAsset),
                 _getPlatformRating(_posterData.imdbRating),
               ],
             ),
