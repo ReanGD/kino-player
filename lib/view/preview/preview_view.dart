@@ -28,6 +28,29 @@ class PreviewView extends StatelessWidget {
     return "$h:$modM ($mStr)";
   }
 
+  Widget _getImage(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    return ShaderMask(
+      shaderCallback: (rect) {
+        return LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.black, Colors.black, Colors.transparent],
+        ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+      },
+      blendMode: BlendMode.dstIn,
+      child: CachedNetworkImage(
+        imageUrl: _contentData.posterWide,
+        height: screenSize.height * 0.7,
+        width: screenSize.width,
+        fit: BoxFit.fitWidth,
+        alignment: Alignment.topCenter,
+        repeat: ImageRepeat.noRepeat,
+        errorWidget: (context, url, error) => Icon(Icons.error),
+      ),
+    );
+  }
+
   Widget _getPlatformRating(BuildContext context, double rating, int votes) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -57,7 +80,6 @@ class PreviewView extends StatelessWidget {
 
   Widget _getView(BuildContext context) {
     final s = S.of(context);
-    final screenSize = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -65,25 +87,7 @@ class PreviewView extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          ShaderMask(
-            shaderCallback: (rect) {
-              return LinearGradient(
-                begin: Alignment(0.0, -0.01),
-                end: Alignment.bottomCenter,
-                colors: [Colors.black, Colors.transparent],
-              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-            },
-            blendMode: BlendMode.dstIn,
-            child: CachedNetworkImage(
-              imageUrl: _contentData.posterWide,
-              height: screenSize.height * 0.7,
-              width: screenSize.width,
-              fit: BoxFit.fitWidth,
-              alignment: Alignment.topCenter,
-              repeat: ImageRepeat.noRepeat,
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
-          ),
+          _getImage(context),
           OutlinedButton(
             focusNode: FocusNode(),
             onPressed: () {
