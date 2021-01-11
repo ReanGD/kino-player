@@ -32,14 +32,6 @@ class _FutureWidgetState<T> extends State<FutureWidget<T>> {
   }
 
   @override
-  void didUpdateWidget(FutureWidget<T> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.future != widget.future) {
-      _retry();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (_snapshot.connectionState != ConnectionState.done) {
       return const LoaderIndicator();
