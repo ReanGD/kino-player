@@ -111,6 +111,19 @@ class PreviewView extends StatelessWidget {
     );
   }
 
+  Widget _getHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: 5, bottom: 10, left: 15),
+      child: Text(
+        _contentData.titleLocal,
+        style: Theme.of(context)
+            .textTheme
+            .headline6
+            .copyWith(fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+
   Widget _getPlatformRating(BuildContext context, double rating, int votes) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -146,6 +159,8 @@ class PreviewView extends StatelessWidget {
       controller: _scrollController,
       clipBehavior: Clip.antiAlias,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
@@ -153,65 +168,69 @@ class PreviewView extends StatelessWidget {
               _getStartButtons(context),
             ],
           ),
+          _getHeader(context),
           Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Text(_contentData.titleLocal),
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Text(_contentData.plot),
           ),
-          Text(_contentData.plot),
-          Table(
-            children: [
-              TableRow(children: [
-                Text(s.previewYear),
-                TextButton(
-                    onPressed: () => print("year"),
-                    child: Text(_contentData.year.toString())),
-              ]),
-              TableRow(children: [
-                Text(s.previewRating),
-                _getRaitingView(context),
-              ]),
-              TableRow(children: [
-                Text(s.previewCountry),
-                TextButton(
-                    onPressed: () => print("country"),
-                    child: Text(_contentData.countries.items
-                        .map((e) => e.title)
-                        .join(","))),
-              ]),
-              TableRow(children: [
-                Text(s.previewGenre),
-                TextButton(
-                    onPressed: () => print("genre"),
-                    child: Text(
-                        _contentData.genres.map((e) => e.title).join(","))),
-              ]),
-              TableRow(children: [
-                Text(s.previewOriginalTitle),
-                Text(_contentData.titleOriginal),
-              ]),
-              TableRow(children: [
-                Text(s.previewDirector),
-                TextButton(
-                    onPressed: () => print("director"),
-                    child: Text(_contentData.directors.join(", "))),
-              ]),
-              TableRow(children: [
-                Text(s.previewActors),
-                TextButton(
-                    onPressed: () => print("actors"),
-                    child: Text(_contentData.actors.join(", "))),
-              ]),
-              TableRow(children: [
-                Text(s.previewEpisodeDuration),
-                Text(_formatDuration(s, _contentData.averageDuration)),
-              ]),
-              TableRow(children: [
-                Text(s.previewComments),
-                TextButton(
-                    onPressed: () => print("comments"),
-                    child: Text(_contentData.numberOfcomments.toString())),
-              ]),
-            ],
+          Padding(
+            padding: EdgeInsets.only(left: 15, right: 15, top: 10),
+            child: Table(
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              children: [
+                TableRow(children: [
+                  Text(s.previewYear),
+                  TextButton(
+                      onPressed: () => print("year"),
+                      child: Text(_contentData.year.toString())),
+                ]),
+                TableRow(children: [
+                  Text(s.previewRating),
+                  _getRaitingView(context),
+                ]),
+                TableRow(children: [
+                  Text(s.previewCountry),
+                  TextButton(
+                      onPressed: () => print("country"),
+                      child: Text(_contentData.countries.items
+                          .map((e) => e.title)
+                          .join(","))),
+                ]),
+                TableRow(children: [
+                  Text(s.previewGenre),
+                  TextButton(
+                      onPressed: () => print("genre"),
+                      child: Text(
+                          _contentData.genres.map((e) => e.title).join(","))),
+                ]),
+                TableRow(children: [
+                  Text(s.previewOriginalTitle),
+                  Text(_contentData.titleOriginal),
+                ]),
+                TableRow(children: [
+                  Text(s.previewDirector),
+                  TextButton(
+                      onPressed: () => print("director"),
+                      child: Text(_contentData.directors.join(", "))),
+                ]),
+                TableRow(children: [
+                  Text(s.previewActors),
+                  TextButton(
+                      onPressed: () => print("actors"),
+                      child: Text(_contentData.actors.join(", "))),
+                ]),
+                TableRow(children: [
+                  Text(s.previewEpisodeDuration),
+                  Text(_formatDuration(s, _contentData.averageDuration)),
+                ]),
+                TableRow(children: [
+                  Text(s.previewComments),
+                  TextButton(
+                      onPressed: () => print("comments"),
+                      child: Text(_contentData.numberOfcomments.toString())),
+                ]),
+              ],
+            ),
           ),
         ],
       ),
