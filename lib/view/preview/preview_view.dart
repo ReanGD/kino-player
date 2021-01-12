@@ -35,7 +35,7 @@ class PreviewView extends StatelessWidget {
         return LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.black, Colors.black, Colors.transparent],
+          colors: [Colors.black, Colors.transparent],
         ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
       },
       blendMode: BlendMode.dstIn,
@@ -47,6 +47,66 @@ class PreviewView extends StatelessWidget {
         alignment: Alignment.topCenter,
         repeat: ImageRepeat.noRepeat,
         errorWidget: (context, url, error) => Icon(Icons.error),
+      ),
+    );
+  }
+
+  Widget _getStartButtons(BuildContext context) {
+    final s = S.of(context);
+
+    final borderSide = BorderSide(
+      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
+      width: 2,
+    );
+    final padding = ButtonTheme.of(context).padding.add(EdgeInsets.all(10));
+
+    List<Widget> buttons = [
+      OutlineButton(
+        autofocus: true,
+        padding: padding,
+        borderSide: borderSide,
+        onPressed: () {
+          final season = _contentData.seasons[1];
+          season.items[season.items.keys.first].getFiles().then((value) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PlayerScreen(value)),
+            );
+          });
+        },
+        child: Text(
+          s.previewViewFilm,
+          style: const TextStyle(fontSize: 17.0),
+        ),
+      ),
+    ];
+
+    if (_contentData.trailer != null) {
+      buttons.add(
+        Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: OutlineButton(
+            padding: padding,
+            borderSide: borderSide,
+            onPressed: () {
+              print("trailer");
+            },
+            child: Text(
+              s.previewTrailer,
+              style: const TextStyle(fontSize: 17.0),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Positioned(
+      bottom: 0.0,
+      left: 0.0,
+      right: 0.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: buttons,
       ),
     );
   }
@@ -87,30 +147,16 @@ class PreviewView extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          _getImage(context),
-          OutlinedButton(
-            focusNode: FocusNode(),
-            onPressed: () {
-              final season = _contentData.seasons[1];
-              print(season);
-              season.items[season.items.keys.first].getFiles().then((value) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PlayerScreen(value)),
-                );
-              });
-              print("film");
-            },
-            child: Text(s.previewViewFilm),
+          Stack(
+            children: [
+              _getImage(context),
+              _getStartButtons(context),
+            ],
           ),
-          OutlinedButton(
-            focusNode: FocusNode(),
-            onPressed: () {
-              print("trailer");
-            },
-            child: Text(s.previewTrailer),
+          Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: Text(_contentData.titleLocal),
           ),
-          Text(_contentData.titleLocal),
           Text(_contentData.plot),
           Table(
             children: [
