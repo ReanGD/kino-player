@@ -5,7 +5,7 @@
 - [x] Экран со списком фильмов
   - [x] Навигация по типам контента (фильмы, сериалы и т.п.)
   - [x] Сортировка по рейтингу, новизне и т.п.
-  - [ ] Сортировка по данным kinopub (https://kpdl.cc/faq.html#pop_hot_fresh)
+  - [ ] Сортировка по данным kinopub (<https://kpdl.cc/faq.html#pop_hot_fresh>)
   - [ ] Поиск по названию
   - [ ] Расширенный поиск
   - [ ] Быстрая перемотка вверх
@@ -15,6 +15,8 @@
 - [ ] Автоматическая сборка
 
 ## Android development helpers
+
+[Material design: Typography](https://material.io/design/typography/the-type-system.html#type-scale)
 
 Connect to android shell
 
